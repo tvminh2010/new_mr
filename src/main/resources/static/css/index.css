@@ -1,0 +1,37 @@
+#menuAccordion {
+	max-height: calc(100vh - 56px);
+	overflow-y: auto;
+}
+
+.menu-link {
+	display: block;
+	color: gray;
+	text-decoration: none;
+	padding: 0.25rem 0.5rem;
+	transition: color 0.2s ease;
+}
+
+.menu-link:hover {
+	color: #333;
+	text-decoration: none;
+	background-color: #f8f9fa;
+}
+
+.accordion-header-btn {
+	color: gray;
+	font-weight: bold;
+	padding: 0.25rem 0.5rem;
+	text-decoration: none;
+	display: block;
+	width: 100%;
+	text-align: left;
+	background: none;
+	border: none;
+	outline: none;
+}
+
+.accordion-header-btn:hover {
+	color: #333;
+	text-decoration: none;
+	background-color: #f1f1f1;
+}

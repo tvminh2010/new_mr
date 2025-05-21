@@ -1,0 +1,22 @@
+<th:block th:fragment="workorder_import_form">
+	<form th:action="@{/workorder/import}" method="post" enctype="multipart/form-data">
+		<div class="form-row align-items-center border">
+			<!-- Label -->
+			<div class="col-auto">
+				<label for="exampleFormControlFile1" class="col-form-label"><strong>Browse for file ...</strong></label>
+			</div>
+
+			<!-- Input file -->
+			<div class="col">
+				<input type="file" name="file" accept=".xls,.xlsx" required class="form-control-file"
+					id="exampleFormControlFile1">
+			</div>
+
+			<!-- Button -->
+			<div class="col-auto">
+				<button class="btn btn-secondary" type="submit">Import</button>
+			</div>
+		</div>
+	</form>
+
+</th:block>

@@ -1,0 +1,53 @@
+<th:block th:fragment="workorder_list">
+<!-- Nội dung chính -->
+        <div class="col-12 col-md-9 col-lg-10 pt-3">
+			<form th:replace="~{fragments/workorder/workorder_import_form :: workorder_import_form}"></form>
+			<form th:replace="~{fragments/workorder/workorder_manual_form :: workorder_manual_form}"></form>
+			
+            <h5 class="mb-3">Hiển thị dữ liệu!</h5> 
+            <!-- Bảng dữ liệu -->
+            <div class="table-responsive">
+                <table id="workOrderTable" class="table table-sm table-hover table-bordered text-nowrap">
+                    <thead class="text-center">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">WorkOrder</th>
+                            <th scope="col">Ngày tạo</th>
+                            <th scope="col">Line</th>
+                            <th scope="col">Model Name</th>
+                            <th scope="col">Số lượng</th>
+                            <th scope="col">Trạng thái</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-center">
+                        <tr th:each="item, iterStat : ${workOrderList}">
+							<td scope="row" th:text="${iterStat.index + 1}"></td>
+                            <td th:text="${item.woNumber}"></td>
+                            <td th:text="${#dates.format(item.createdDate, 'dd-MM-yyyy')}"></td>
+                            <td th:text="${item.line}"></td>
+                            <td th:text="${item.model}"></td>
+                            <td th:text="${item.qty}"></td>
+                            <td th:text="${item.status}"></td>
+                            <td>
+                                <a th:href="@{/workorder/edit(wo_id=${item.woNumber})}">
+                                    <i class="fas fa-edit text-secondary"></i>
+                                </a>
+                                <a th:href="@{/workorder/del(wo_id=${item.woNumber})}" onclick="return confirmDelete()">
+                                    <i class="fas fa-trash text-danger"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Thông báo -->
+            <div th:if="${message}" class="alert alert-success alert-dismissible fade show mt-2" role="alert">
+                <span th:text="${message}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+</th:block>

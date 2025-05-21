@@ -1,0 +1,35 @@
+<th:block th:fragment="workorder_manual_form">
+	<form role="form" id="MyForm" th:action="@{/workorder/save}" th:object="${workOrder}" method="post">
+		<table class="table small table-bordered table-striped rcorners1 mt-5">
+			<thead>
+				<tr>
+					<th colspan="4">
+						<h5>Nhập/Sửa Workorder thủ công</h5>
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td><label for="woNumber"> WorkOrder </label></td>
+					<td><input type="text" id="woNumber" th:field="*{woNumber}" class='rcorners1' /></td>
+					<td><label for="line"> LineNo </label></td>
+					<td><input type="text" id="line" th:field="*{line}" class='rcorners1' />
+					</td>
+				</tr>
+				<tr>
+					<td><label for="model">Model Name</label></td>
+					<td><input type="text" id="model" th:field="*{model}" class='rcorners1' />
+					</td>
+					<td><label for="qty">Số lượng</label></td>
+					<td><input type="text" id="qty" th:field="*{qty}" class='rcorners1' /></td>
+				</tr>
+				<tr>
+					<td colspan="4" style="text-align: right;">
+						<input type="button" value="Xóa trắng" onclick="myClear()" />
+						<input type="submit" name="save" value="Save" />
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+</th:block>

@@ -1,0 +1,47 @@
+body {
+	padding-top: 5rem;
+}
+
+.starter-template {
+	padding: 3rem 1.5rem;
+	text-align: center;
+}
+
+/* --- Bổ sung cho starter template */
+.bd-placeholder-img {
+	font-size: 1.125rem;
+	text-anchor: middle;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+@media (min-width: 768px) {
+	.bd-placeholder-img-lg {
+		font-size: 3.5rem;
+	}
+}
+
+
+body {
+  padding-top: 70px; /* để không bị che bởi navbar fixed-top */
+}
+
+
+  @media (max-width: 768px) {
+    table.table td, table.table th {
+      font-size: 12px;
+      padding: 0.3rem;
+    }
+  }
+
+  @media (max-width: 576px) {
+    table.table td, table.table th {
+      font-size: 11px;
+      padding: 0.25rem;
+    }
+  }
+
+
+/* --- End bổ sung cho starter template */

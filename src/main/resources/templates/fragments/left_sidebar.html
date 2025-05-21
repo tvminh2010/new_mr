@@ -1,0 +1,71 @@
+<th:block th:fragment="left_sidebar">
+	<!-- Sidebar toggle for small screen -->
+	<div class="col-12 d-md-none bg-light p-2 border-bottom">
+		<button class="btn btn-outline-secondary btn-sm" type="button" data-toggle="collapse"
+			data-target="#sidebarMenu">☰ Menu</button>
+	</div>
+	
+	<div class="col-md-3 col-lg-2 collapse d-md-block pt-3 bg-light" id="sidebarMenu">
+		<div id="menuAccordion">
+			<!-- Nghiệp vụ -->
+			<div class="card">
+				<div class="card-header pl-0 pt-2 pb-2">
+					<h5 class="mb-0">
+						<button class="accordion-header-btn" data-toggle="collapse" data-target="#collapseBusiness">
+							Nghiệp vụ
+						</button>
+					</h5>
+				</div>
+				<div id="collapseBusiness" class="collapse show" data-parent="#menuAccordion">
+					<div class="list-group list-group-flush pl-3">
+						<a href="/workorder" class="list-group-item menu-link">Nhập kế hoạch SX</a>
+						<a href="/ycnvl" class="list-group-item menu-link">Yêu cầu NVL</a>
+						<a href="#" class="list-group-item menu-link">Giao nhận NVL</a>
+						<a href="#" class="list-group-item menu-link">Hoàn trả NVL</a>
+						<a href="#" class="list-group-item menu-link">Đóng mở Workorder</a>
+					</div>
+				</div>
+			</div>
+
+			<!-- Báo cáo -->
+			<div class="card">
+				<div class="card-header pl-0 pt-2 pb-2">
+					<h5 class="mb-0">
+						<button class="accordion-header-btn collapsed" data-toggle="collapse"
+							data-target="#collapseReport">
+							Xuất báo cáo
+						</button>
+					</h5>
+				</div>
+				<div id="collapseReport" class="collapse" data-parent="#menuAccordion">
+					<div class="list-group list-group-flush pl-3">
+						<a href="#" class="list-group-item menu-link">Báo cáo theo WorkOrder</a>
+						<a href="#" class="list-group-item menu-link">Báo cáo chi tiết WorkOrder</a>
+						<a href="#" class="list-group-item menu-link">Báo cáo tổng hợp</a>
+						<a href="#" class="list-group-item menu-link">Báo cáo hoàn trả</a>
+					</div>
+				</div>
+			</div>
+
+			<!-- Thiết lập -->
+			<div class="card">
+				<div class="card-header pl-0 pt-2 pb-2">
+					<h5 class="mb-0">
+						<button class="accordion-header-btn collapsed" data-toggle="collapse"
+							data-target="#collapseSetting">
+							Thiết lập
+						</button>
+					</h5>
+				</div>
+				<div id="collapseSetting" class="collapse" data-parent="#menuAccordion">
+					<div class="list-group list-group-flush pl-3">
+						<a href="#" class="list-group-item menu-link">Item Master</a>
+						<a href="#" class="list-group-item menu-link">Bom</a>
+						<a href="#" class="list-group-item menu-link">Item Master Sample</a>
+						<a href="#" class="list-group-item menu-link">Bom Sample</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</th:block>
