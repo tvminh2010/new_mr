@@ -49,4 +49,14 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 		return repository.existsByWoNumber(woNumber);
 	}
 	/* ---------------------------------------------------- */
+	@Override
+	public List<String> getAllLine() {
+		return repository.findAllDistinctLines();
+	}
+	/* ---------------------------------------------------- */
+	@Override
+	public List<String> getAllWoNumberByLine(String line) {
+		return repository.findAllWoNumberByLine(line);
+	}
+	/* ---------------------------------------------------- */
 }

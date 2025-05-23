@@ -11,4 +11,6 @@ public interface WorkOrderService {
 	Optional<WorkOrder> findByWoNumber(String woNumber);
 	void delete(WorkOrder workOrder);
 	boolean existsByWoNumber(String woNumber);
+	List<String> getAllLine();
+	List<String> getAllWoNumberByLine(String line);
 }

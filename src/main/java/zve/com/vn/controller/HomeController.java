@@ -1,7 +1,10 @@
 package zve.com.vn.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,10 +14,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import zve.com.vn.dto.yeucaunvl.YeucauNvlItemProjection;
 import zve.com.vn.entity.WorkOrder;
+import zve.com.vn.repository.YeuCauNVLItemRepositoryCustom;
 import zve.com.vn.service.WorkOrderExcelImporter;
 import zve.com.vn.service.WorkOrderService;
 
@@ -26,6 +32,9 @@ public class HomeController {
 	
 	@Autowired
 	private WorkOrderService service;
+	
+	@Autowired
+	private YeuCauNVLItemRepositoryCustom nvlRepository;
 	
 	/* ------------------------------------------------- */
 	@GetMapping({"/", "/workorder"})
@@ -54,7 +63,7 @@ public class HomeController {
 			 } 
 		 }
 		 model.addAttribute("workOrder", workOrder);
-		 model.addAttribute("workOrderList", workOrderList);
+		 model.addAttribute("workOrderList", workOrderList); 
 		 return "index";
 	}
 	/* ---------------------------------------------------- */
@@ -116,8 +125,31 @@ public class HomeController {
 	}
 	/* ---------------------------------------------------- */
 	@GetMapping("/ycnvl")
-	public String ycnvl() {
+	public String ycnvl(Model model) {
+	    List<String> lines = service.getAllLine();
+	    model.addAttribute("lines", lines);
 		return "ycnvl";
+	}
+	/* ------------------------------------------------- */
+	@GetMapping("/ycnvl/by-line")
+	@ResponseBody
+	public List<String> getWorkOrdersByLine(@RequestParam("line") String line) {
+	    return service.getAllWoNumberByLine(line);
+	}
+	/* ------------------------------------------------- */
+	@GetMapping("/ycnvl/workorder-info")
+	@ResponseBody
+	public Map<String, Object> getWorkOrderInfo(@RequestParam("woNumber") String woNumber) {
+	    WorkOrder workOrder = service.findByWoNumber(woNumber).orElse(null);
+
+	    Map<String, Object> result = new HashMap<>();
+	    if (workOrder != null) {
+	        result.put("model", workOrder.getModel());
+	        result.put("plan", String.valueOf(workOrder.getQty()));
+	        List<YeucauNvlItemProjection> nvlList = nvlRepository.findAllItems(workOrder.getModel(), workOrder.getQty());
+	        result.put("materials", nvlList);
+	    }
+	    return result;
 	}
 	/* ------------------------------------------------- */
 }

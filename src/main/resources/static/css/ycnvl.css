@@ -1,0 +1,29 @@
+  /* Padding tiêu đề giữ nguyên */
+  .custom-table th {
+  	padding-top: 0.5rem;
+  	padding-bottom: 0.5rem;
+  }
+
+  /* Padding dữ liệu nhỏ hơn chút */
+  .custom-table td {
+  	padding-top: 0.3rem;
+  	padding-bottom: 0.3rem;
+  }
+
+  /* Giảm chiều cao input để không làm dòng bị cao lên */
+  .custom-table input.form-control {
+  	padding-top: 0.2rem;
+  	padding-bottom: 0.2rem;
+  	font-size: 0.85rem;
+  	height: calc(1.4em + 0.3rem + 2px);
+  }
+
+  
+  .text-faded {
+  	color: #6c757d !important;
+  	opacity: 0.4 !important;
+  }
+  
+  .input-half {
+    width: 50%;
+  }
