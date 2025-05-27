@@ -2,8 +2,8 @@ package zve.com.vn.repository;
 
 import java.util.List;
 
-import zve.com.vn.dto.yeucaunvl.YeucauNvlItemDto;
+import zve.com.vn.dto.order.response.ResponseOrderDto;
 
 public interface YeuCauNVLItemRepositoryCustom {
-	List<YeucauNvlItemDto> findAllItems (String model, Integer plan);
+	List<ResponseOrderDto> findAllItems (String model, Integer plan);
 }

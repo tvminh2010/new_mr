@@ -1,10 +1,10 @@
-package zve.com.vn.dto.yeucaunvl;
+package zve.com.vn.dto.order.request;
 
 import java.math.BigDecimal;
 import lombok.Data;
 
 @Data
-public class WorkOrderYcnvlSessionDto {
+public class RequestOrderDetailDto {
 	private String itemCode;
     private BigDecimal qtyrequest;
 }

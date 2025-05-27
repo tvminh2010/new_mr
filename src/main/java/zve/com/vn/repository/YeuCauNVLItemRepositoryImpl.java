@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import zve.com.vn.dto.yeucaunvl.YeucauNvlItemDto;
+import zve.com.vn.dto.order.response.ResponseOrderDto;
 
 @Repository
 public class YeuCauNVLItemRepositoryImpl implements YeuCauNVLItemRepositoryCustom {
@@ -21,7 +21,7 @@ public class YeuCauNVLItemRepositoryImpl implements YeuCauNVLItemRepositoryCusto
 
 	/* ---------------------------------------------------------- */
 	@Override
-	public List<YeucauNvlItemDto> findAllItems(String model, Integer plan) {
+	public List<ResponseOrderDto> findAllItems(String model, Integer plan) {
 		String sql = """
 		        SELECT pt.pt_desc2, ps.ps_comp, pt.pt_desc1, pk.pt_package, ps.ps_qty_per, ttoh.ld_total_oh
 		        FROM ps_mstr ps
@@ -44,7 +44,7 @@ public class YeuCauNVLItemRepositoryImpl implements YeuCauNVLItemRepositoryCusto
 			        BigDecimal kehoach = (psQtyPer != null) ? psQtyPer.multiply(planValue) : BigDecimal.ZERO;
 			        kehoach = kehoach.setScale(3, RoundingMode.HALF_UP);  // giữ 3 chữ số sau dấu phẩy
 			        
-			        return new YeucauNvlItemDto(
+			        return new ResponseOrderDto(
 			            rs.getString("pt_desc2"),
 			            rs.getString("ps_comp"),
 			            rs.getString("pt_desc1"),

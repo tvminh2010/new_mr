@@ -20,10 +20,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import zve.com.vn.dto.yeucaunvl.WorkOrderYcnvlRequest;
-import zve.com.vn.dto.yeucaunvl.WorkOrderYcnvlSessionDto;
-import zve.com.vn.dto.yeucaunvl.YeucauNvlItemDto;
+
 import zve.com.vn.entity.WorkOrder;
+import zve.com.vn.dto.order.request.RequestOrderDetailDto;
+import zve.com.vn.dto.order.request.RequestOrderDto;
+import zve.com.vn.dto.order.response.ResponseOrderDto;
 import zve.com.vn.entity.Order;
 import zve.com.vn.repository.YeuCauNVLItemRepositoryCustom;
 import zve.com.vn.service.WorkOrderExcelImporter;
@@ -169,14 +170,14 @@ public class HomeController {
 			result.put("model", workOrder.getModel());
 			result.put("plan", String.valueOf(workOrder.getQty()));
 			
-			List<YeucauNvlItemDto > nvlList = nvlRepository.findAllItems(workOrder.getModel(),workOrder.getQty());
+			List<ResponseOrderDto > nvlList = nvlRepository.findAllItems(workOrder.getModel(),workOrder.getQty());
 			List<Order> sessionList = workOrder.getYcnvlSessions();
 			
 			Map<String, Order> sessionMap = sessionList.stream()
 		            .collect(Collectors.toMap(Order::getItemcode, s -> s));
 		
 			
-		   for (YeucauNvlItemDto item : nvlList) {
+		   for (ResponseOrderDto item : nvlList) {
 	            Order session = sessionMap.get(item.getItemCode());
 	            if (session != null) {
 	                item.setQtyReceive(session.getQtyreceived());
@@ -192,16 +193,16 @@ public class HomeController {
 	/* ------------------------------------------------- */
 	@PostMapping("/ycnvl/workorder-info")
 	@ResponseBody
-	public String saveWorkOrderWithBOM(@RequestBody WorkOrderYcnvlRequest request) {
+	public String saveWorkOrderWithBOM(@RequestBody RequestOrderDto request) {
 	    String woNumber = request.getWoNumber();
-	    List<WorkOrderYcnvlSessionDto> items = request.getItems();
+	    List<RequestOrderDetailDto> items = request.getItems();
 
 	    WorkOrder workOrder = service.findByWoNumber(woNumber).orElse(null);
 	    if (workOrder == null) {
 	        return "WorkOrder không tồn tại: " + woNumber;
 	    }
 
-	    // Lấy danh sách session cũ (nếu null thì tạo mới)
+	    // Lấy danh sách order cũ (nếu null thì tạo mới)
 	    List<Order> orders = workOrder.getYcnvlSessions();
 	    if (orders == null) {
 	    	orders = new ArrayList<>();
@@ -210,7 +211,7 @@ public class HomeController {
 	    Map<String, Order> sessionMap = orders.stream()
 	        .collect(Collectors.toMap(Order::getItemcode, s -> s));
 
-	    for (WorkOrderYcnvlSessionDto dto : items) {
+	    for (RequestOrderDetailDto dto : items) {
 	        if (dto.getItemCode() == null || dto.getQtyrequest() == null) continue;
 
 	        Order existing = sessionMap.get(dto.getItemCode());

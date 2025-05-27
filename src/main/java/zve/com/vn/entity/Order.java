@@ -20,7 +20,7 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 @Entity
-@Table(name = "tbl_ycnvl_session")
+@Table(name = "tbl_order")
 @Getter
 @Setter
 @NoArgsConstructor
