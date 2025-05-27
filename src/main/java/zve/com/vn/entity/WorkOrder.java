@@ -34,7 +34,7 @@ public class WorkOrder {
 	String woNumber;
 	String line;
 	String model;
-	Integer qty;
+	Integer fgQty;
 	Integer status;
 	String userId;
 	
@@ -42,7 +42,7 @@ public class WorkOrder {
 	Date createdDate;
 	
 	@OneToMany(mappedBy = "workOrder", cascade = CascadeType.ALL, orphanRemoval = true)
-	List<Order> ycnvlSessions = new ArrayList<>();
+	List<Order> orders = new ArrayList<>();
 
 	
 	@PrePersist

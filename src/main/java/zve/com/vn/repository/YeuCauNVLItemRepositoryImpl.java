@@ -39,10 +39,10 @@ public class YeuCauNVLItemRepositoryImpl implements YeuCauNVLItemRepositoryCusto
 			    (rs, rowNum) -> {
 
 			        BigDecimal psQtyPer = rs.getBigDecimal("ps_qty_per");
-			        BigDecimal planValue = (plan != null) ? BigDecimal.valueOf(plan) : BigDecimal.ZERO;
+			        BigDecimal fgPlanValue = (plan != null) ? BigDecimal.valueOf(plan) : BigDecimal.ZERO;
 
-			        BigDecimal kehoach = (psQtyPer != null) ? psQtyPer.multiply(planValue) : BigDecimal.ZERO;
-			        kehoach = kehoach.setScale(3, RoundingMode.HALF_UP);  // giữ 3 chữ số sau dấu phẩy
+			        BigDecimal kehoach = (psQtyPer != null) ? psQtyPer.multiply(fgPlanValue) : BigDecimal.ZERO;
+			        kehoach = kehoach.setScale(3, RoundingMode.HALF_UP);  
 			        
 			        return new ResponseOrderDto(
 			            rs.getString("pt_desc2"),

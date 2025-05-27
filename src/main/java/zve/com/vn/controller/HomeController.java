@@ -103,13 +103,13 @@ public class HomeController {
 			workOrder = existingWorkOrderOpt.get();
 			workOrder.setLine(workOrderForm.getLine());
 			workOrder.setModel(workOrderForm.getModel());
-			workOrder.setQty(workOrderForm.getQty());
+			workOrder.setFgQty(workOrderForm.getFgQty());
 		} else {
 			workOrder = new WorkOrder();
 			workOrder.setWoNumber(workOrderForm.getWoNumber());
 			workOrder.setLine(workOrderForm.getLine());
 			workOrder.setModel(workOrderForm.getModel());
-			workOrder.setQty(workOrderForm.getQty());
+			workOrder.setFgQty(workOrderForm.getFgQty());
 			workOrder.setStatus(1);
 		}
 
@@ -168,20 +168,20 @@ public class HomeController {
 		Map<String, Object> result = new HashMap<>();
 		if (workOrder != null) {
 			result.put("model", workOrder.getModel());
-			result.put("plan", String.valueOf(workOrder.getQty()));
+			result.put("plan", String.valueOf(workOrder.getFgQty()));
 			
-			List<ResponseOrderDto > nvlList = nvlRepository.findAllItems(workOrder.getModel(),workOrder.getQty());
-			List<Order> sessionList = workOrder.getYcnvlSessions();
+			List<ResponseOrderDto > nvlList = nvlRepository.findAllItems(workOrder.getModel(),workOrder.getFgQty());
+			List<Order> orderList = workOrder.getOrders();
 			
-			Map<String, Order> sessionMap = sessionList.stream()
+			Map<String, Order> orderMap = orderList.stream()
 		            .collect(Collectors.toMap(Order::getItemcode, s -> s));
 		
 			
 		   for (ResponseOrderDto item : nvlList) {
-	            Order session = sessionMap.get(item.getItemCode());
-	            if (session != null) {
-	                item.setQtyReceive(session.getQtyreceived());
-	                item.setQtyrequest(session.getQtyrequest());
+	            Order order = orderMap.get(item.getItemCode());
+	            if (order != null) {
+	                item.setQtyReceive(order.getQtyreceived());
+	                item.setQtyrequest(order.getQtyrequest());
 	            }
 	        } 
 			
@@ -203,39 +203,43 @@ public class HomeController {
 	    }
 
 	    // Lấy danh sách order cũ (nếu null thì tạo mới)
-	    List<Order> orders = workOrder.getYcnvlSessions();
+	    List<Order> orders = workOrder.getOrders();
 	    if (orders == null) {
 	    	orders = new ArrayList<>();
-	        workOrder.setYcnvlSessions(orders);
+	        workOrder.setOrders(orders);
 	    }
-	    Map<String, Order> sessionMap = orders.stream()
+	    
+	    Map<String, Order> orderMap = orders.stream()
 	        .collect(Collectors.toMap(Order::getItemcode, s -> s));
 
+	    
 	    for (RequestOrderDetailDto dto : items) {
 	        if (dto.getItemCode() == null || dto.getQtyrequest() == null) continue;
 
-	        Order existing = sessionMap.get(dto.getItemCode());
+	        Order existing = orderMap.get(dto.getItemCode());
 
 	        if (existing != null) {
 	            existing.setQtyrequest(dto.getQtyrequest());
 	            existing.setUpdateDate(new Date());
 	        } else {
-	            Order newSession = Order.builder()
+	            Order newOrder = Order.builder()
 	                .itemcode(dto.getItemCode())
 	                .qtyrequest(dto.getQtyrequest())
 	                .qtyreceived(BigDecimal.ZERO)
 	                .status(1)
-	                .userId("V03510")
+	                .createUserId("V03510")
 	                .createdDate(new Date())
 	                .workOrder(workOrder)
 	                .build();
-	            orders.add(newSession);
+	            orders.add(newOrder);
 	        }
 	    }
 
 	    service.save(workOrder);
 	    return "Đã lưu thành công " + items.size() + " dòng cho WorkOrder " + woNumber;
 	}
+
+	/* ------------------------------------------------- */
 
 	/* ------------------------------------------------- */
 }
