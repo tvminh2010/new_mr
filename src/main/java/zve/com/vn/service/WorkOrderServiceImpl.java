@@ -59,4 +59,9 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 		return repository.findAllWoNumberByLine(line);
 	}
 	/* ---------------------------------------------------- */
+	@Override
+	public Optional<WorkOrder> findById(String id) {
+		return repository.findById(id);
+	}
+	/* ---------------------------------------------------- */
 }

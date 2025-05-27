@@ -9,6 +9,7 @@ public interface WorkOrderService {
 	void saveAll(List<WorkOrder> workOrders);
 	List<WorkOrder> findAll();
 	Optional<WorkOrder> findByWoNumber(String woNumber);
+	Optional<WorkOrder> findById (String woNumber);
 	void delete(WorkOrder workOrder);
 	boolean existsByWoNumber(String woNumber);
 	List<String> getAllLine();

@@ -22,6 +22,15 @@ function confirmDelete() {
 }
 
 
+/* ------------------ Submit form for deletion of workOrder ---------------------------------- */
+function submitDeleteForm() {
+	
+    if (confirm("Bạn có chắc muốn xoá không?")) {
+        document.getElementById("deleteWorkOrder").submit();
+    }
+	document.getElementById("deleteWorkOrder").submit();
+    return false;
+}
 /* ------------------ Xóa trắng ---------------------------------- */
 function myClear() {
 	const form = document.getElementById("MyForm");

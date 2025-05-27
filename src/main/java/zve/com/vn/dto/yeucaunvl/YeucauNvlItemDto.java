@@ -14,12 +14,13 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class YeucauNvlItemImpl implements YeucauNvlItemProjection {
+public class YeucauNvlItemDto {
 	String category;
 	String itemCode;
 	String model;
 	Integer donggoi;
-	BigDecimal plan;
-	Integer receive;
+	BigDecimal qtyPlan;
+	BigDecimal qtyReceive;
+	BigDecimal qtyrequest;
 	Integer instock;
 }
