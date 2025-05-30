@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import zve.com.vn.entity.Order;
 import zve.com.vn.entity.WorkOrder;
 
 public interface WorkOrderRepository extends JpaRepository<WorkOrder, String> {
@@ -18,4 +19,7 @@ public interface WorkOrderRepository extends JpaRepository<WorkOrder, String> {
 	
 	@Query("SELECT w.woNumber FROM WorkOrder w WHERE w.line = :line")
 	List<String> findAllWoNumberByLine(@Param("line") String line);
+	
+	@Query("SELECT w.woNumber FROM WorkOrder w WHERE w.line = :line")
+	Order findOrderByStatus(@Param("OrderStatus") Long orderStatus);
 }

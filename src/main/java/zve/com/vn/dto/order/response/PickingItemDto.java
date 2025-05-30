@@ -9,20 +9,19 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 /**
- * Dùng để nhận dữ liệu từ query hiển thị trên màn hình yêu cầu NVL
+ * Dùng để nhận dữ liệu từ query hiển thị trên màn hình Picking trên tablet
  */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ResponseOrderDto {
-	String category;
+public class PickingItemDto {
 	String itemCode;
 	String itemName;
-	Integer donggoi;
-	BigDecimal qtyPlan;
-	BigDecimal qtyReceive;
-	BigDecimal qtyrequest;
-	Integer instock;
+	String location;
+	String serialNo;
+	BigDecimal balanceqty;
+	BigDecimal requestqty;
+	BigDecimal pickingqty;
 }

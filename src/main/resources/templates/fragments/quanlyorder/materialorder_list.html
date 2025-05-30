@@ -1,0 +1,85 @@
+<th:block th:fragment="materialorder_list">
+	<!-- Nội dung chính -->
+	<div class="col-12 col-md-9 col-lg-10 pt-3">
+		<h4 class="mb-3">MATERIAL ORDER</h4>
+		<style>
+			.icon-status {
+				color: #4e3f2c;
+				font-size: 1.1rem;
+				margin-left: 0.25rem;
+				margin-right: 0.25rem;
+			}
+		</style>
+
+		<div class="table-responsive">
+			
+			<table id="workOrderTable" class="table table-sm table-hover table-bordered text-nowrap">
+				<thead class="text-center">
+					<tr>
+						<th scope="col">#</th>
+						<th scope="col">TIME</th>
+						<th scope="col">WORKORDER</th>
+						<th scope="col">LINE</th>
+						<th scope="col">MODEL</th>
+						<th scope="col">ORDER</th>
+						<th scope="col">STATUS</th>
+						<th scope="col">ACTION</th>
+						<!-- <th scope="col">ACTION</th> -->
+					</tr>
+				</thead>
+				
+				
+				<tbody class="text-center">
+				    <tr th:each="order, iterStat : ${orderLists}"
+				        th:classappend="${order.status == 1 ? 'bg-warning' 
+				                     : order.status == 2 ? 'table-warning' 
+				                     : order.status == 3 ? 'bg-success' 
+				                     : order.status == 4 ? 'table-secondary' : ''}"
+				        th:attr="data-id=${order.id}">
+
+				        <td scope="row" th:text="${iterStat.index + 1}"></td>
+				        <td th:text="${#dates.format(order.createdDate, 'HH:mm')}"></td>
+				        <td th:text="${order.workOrder.woNumber}"></td>
+				        <td th:text="${order.workOrder.line}"></td>
+				        <td th:text="${order.workOrder.model}"></td>
+				        <td th:text="${order.orderName}"></td>
+
+				        <td class="status-text">
+				            <span th:switch="${order.status}">
+				                <span th:case="1">1. Waiting...</span>
+				                <span th:case="2">2. Picking...</span>
+				                <span th:case="3">3. Đang giao...</span>
+				                <span th:case="4">4. Received</span>
+				                <span th:case="*">Không xác định</span>
+				            </span>
+				        </td>
+
+				        <td class="status-cell">
+				            <a th:if="${order.status == 1}" href="#"
+				               th:data-id="${order.id}"
+				               onclick="return confirmAndUpdateStatus(this)"
+				               title="Chuyển nhặt hàng">
+				                <i class="fas fa-hand-point-right icon-status"></i>
+				            </a>
+							
+							<a th:if="${order.status == 2}" th:href="@{/order/picking(id=${order.id})}">
+							    <i class="fas fa-tasks icon-status" title="Đang nhặt hàng"></i>
+							</a>
+							
+							<a th:if="${order.status == 3}" th:href="@{/order/delivery(id=${order.id})}">
+							    <i class="fas fa-truck-moving icon-status" title="Đang giao hàng"></i>
+							</a>
+							
+				            
+				            <i th:if="${order.status == 4}" class="fas fa-check-square text-success" title="Đã giao hàng"></i>
+				        </td>
+				    </tr>
+				</tbody>
+
+
+
+			</table>
+			<div id="status-message" class="text-center mt-2" style="display: none;"></div>
+		</div>
+	</div>
+</th:block>

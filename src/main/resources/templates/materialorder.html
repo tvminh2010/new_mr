@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="vi">
+<head th:replace="~{fragments/header :: header}">
+</head>
+<body>
+	<nav th:replace="~{fragments/topmenu :: topmenu}"></nav>
+	<main role="main" class="container-fluid" style="margin-top: 56px;">
+		<div class="row">
+			<div th:replace="~{fragments/left_sidebar :: left_sidebar}"></div>
+			<div th:replace="~{fragments/quanlyorder/materialorder_list :: materialorder_list}"></div>
+		</div>
+	</main>
+	<script src="/bootstrap-4.6.2/js/jquery-3.5.1.min.js"></script>
+	<script src="/bootstrap-4.6.2/js/bootstrap.bundle.min.js"></script>
+	<!-- DataTables CSS + JS -->
+	<script src="/dataTables/jquery.dataTables.min.js"></script>
+	<script src="/js/materialorder.js"></script>
+</body>
+</html>

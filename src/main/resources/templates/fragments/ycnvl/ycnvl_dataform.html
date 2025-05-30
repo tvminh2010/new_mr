@@ -1,0 +1,33 @@
+<th:block th:fragment="ycnvl_dataform">
+	<div class="table-responsive">
+	<form id="dataForm" class="mb-3">
+		<table class="table table-sm table-bordered table-hover text-center align-middle custom-table">
+			<thead class="thead-light">
+				<tr class="text-nowrap">
+					<th class="align-middle">Category</th>
+					<th class="align-middle">Mã NVL</th>
+					<th class="align-middle">Tên NVL</th>
+					<th class="align-middle">Đóng gói</th>
+					<th class="align-middle">Kế hoạch</th>
+					<th class="align-middle">Đã nhận</th>
+					<th class="align-middle">Tồn kho</th>
+					<th class="align-middle">Số lượng <span class="text-danger">*</span></th>
+				</tr>
+			</thead>
+
+			<!-- Nội dung table body -->
+			<tbody id="dataTableBody">
+			</tbody>
+			<!-- End nội dung table body -->
+
+		</table>
+		<div class="clearfix float-right mt-3">
+			<button type="reset" class="btn btn-secondary">Xóa trắng</button>
+			<button type="submit" class="btn btn-primary">Save</button>
+		</div>
+
+		<div id="saveMessage" class="mt-2 small text-success" style="display: none;"></div>
+
+	</form>
+	</div>
+</th:block>

@@ -27,7 +27,7 @@
 						<td th:text="${#dates.format(item.createdDate, 'dd-MM-yyyy')}"></td>
 						<td th:text="${item.line}"></td>
 						<td th:text="${item.model}"></td>
-						<td th:text="${item.qty}"></td>
+						<td th:text="${item.woQty}"></td>
 						<td th:text="${item.status}"></td>
 						<td>
 							<a th:href="@{/workorder/edit(wo_id=${item.woNumber})}">

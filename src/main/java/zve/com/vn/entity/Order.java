@@ -1,11 +1,11 @@
 package zve.com.vn.entity;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -36,15 +36,15 @@ public class Order {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
-	String itemcode;
-	BigDecimal qtyreceived;
-	BigDecimal qtyrequest;
-	
 	Integer status;
 	String createUserId;
 	String updateUserId;
 	Date createdDate;
 	Date updateDate;
+	Integer orderNumber;
+	
+	@Column(unique = true)
+	String orderName;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "workorder_id")

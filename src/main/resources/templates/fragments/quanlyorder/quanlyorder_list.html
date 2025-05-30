@@ -1,0 +1,62 @@
+<th:block th:fragment="quanlyorder_list">
+	<!-- Nội dung chính -->
+	<div class="col-12 col-md-9 col-lg-10 pt-3">
+		<h5 class="mb-3">Quản lý danh sách order nguyên vật liệu!</h5>
+		<div class="row">
+			<!-- ************************************ -->
+			<th:block th:each="order : ${orderLists}">
+					<!-- Nếu status = 1 -->
+					<div th:if="${order.status == 1}" class="col-6 col-sm-3 col-md-2 col-xl-2 mb-3">
+						<a th:href="@{'/quanlyorder/detail/' + ${order.workOrder.woNumber}}" class="text-decoration-none d-block">
+							<div class="card bg-success text-white">
+								<div class="card-body p-2">
+									<h5 class="card-title mb-1">Line : <span th:text="${order.workOrder.line}"></span></h5>
+									<h6 class="card-title mb-1">Wo : <span th:text="${order.workOrder.woNumber}"></span></h6>
+									<p class="mb-1">OrderNo: <span th:text="${order.orderName}"></span></p>
+									<p class="card-text small">Status : Đang yêu cầu...</p>
+								</div>
+							</div>
+						</a>
+					</div>
+
+					<!-- Nếu status = 2 -->
+					<div th:if="${order.status == 2}" class="col-6 col-sm-3 col-md-2 col-xl-2 mb-3">
+						<a th:href="@{'/quanlyorder/detail/' + ${order.workOrder.woNumber}}" class="text-decoration-none d-block">
+						<div class="card bg-warning">
+							<div class="card-body p-2">
+								<h5 class="card-title mb-1">Line : <span th:text="${order.workOrder.line}"></span></h5>
+								<h6 class="card-title mb-1">Wo : <span th:text="${order.workOrder.woNumber}"></span></h6>
+								<p class="mb-1">OrderNo: <span th:text="${order.orderName}"></span></p>
+								<p class="card-text small">Status : Đang lấy hàng...</p>
+							</div>
+						</div>
+						</a>
+					</div>
+				</th:block>
+				
+			<!-- 
+			<div class="col-6 col-sm-3 col-md-2 col-xl-2 mb-3">
+				<div class="card bg-warning">
+					<div class="card-body p-2">
+						<h5 class="card-title mb-1">Line : 01</h5>
+						<h6 class="card-title mb-1">Wo : WO2025060602</h6>
+						<p class="mb-1">OrderNo: 01</p>
+						<p class="card-text small">Status : Đang lấy hàng ...</p>
+					</div>
+				</div>
+			</div>
+			
+			<div class="col-6 col-sm-3 col-md-2 col-xl-2 mb-3">
+				<div class="card bg-danger text-white">
+					<div class="card-body p-2">
+						<h5 class="card-title mb-1">Line : 01</h5>
+						<h6 class="card-title mb-1">Wo : WO2025060801</h6>
+						<p class="mb-1">OrderNo: 02</p>
+						<p class="card-text small">Status : Kết thúc</p>
+					</div>
+				</div>
+			</div>
+			-->
+		</div>
+	</div>
+</th:block>

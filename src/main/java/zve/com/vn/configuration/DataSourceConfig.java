@@ -39,4 +39,18 @@ public class DataSourceConfig {
     public JdbcTemplate secondJdbcTemplate(@Qualifier("secondDataSource") DataSource ds) {
         return new JdbcTemplate(ds);
     }
+    
+    /* DataSource thứ 3 (PostgreSQL) */
+    @Bean(name = "thirdDataSource")
+    @ConfigurationProperties(prefix = "third.datasource")
+    public DataSource thirdDataSource() {
+        return DataSourceBuilder.create().build();
+    }
+
+    /* JdbcTemplate cho PostgreSQL */
+    @Bean(name = "thirdJdbcTemplate")
+    public JdbcTemplate thirdJdbcTemplate(@Qualifier("thirdDataSource") DataSource ds) {
+        return new JdbcTemplate(ds);
+    }
+
 }

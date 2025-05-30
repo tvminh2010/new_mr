@@ -34,7 +34,7 @@ public class WorkOrder {
 	String woNumber;
 	String line;
 	String model;
-	Integer fgQty;
+	Integer woQty;
 	Integer status;
 	String userId;
 	

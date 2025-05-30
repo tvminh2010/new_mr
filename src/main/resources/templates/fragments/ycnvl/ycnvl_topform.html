@@ -1,0 +1,41 @@
+<th:block th:fragment="ycnvl_topform">
+	<form id="lineForm" class="mb-4">
+		<div class="d-flex justify-content-between align-items-center flex-nowrap w-100"
+			style="gap: 0.5rem; overflow-x: auto;">
+
+			<!-- Line -->
+			<div class="d-flex align-items-center" style="flex: 1 1 0; min-width: 150px;">
+				<label for="lineSelect" class="mb-0 mr-2 font-weight-bold" style="white-space: nowrap;">Line:</label>
+				<select class="form-control form-control-sm" id="lineSelect" name="line">
+					<option value="">--Line--</option>
+					<option th:each="line : ${lines}" th:value="${line}" th:text="${line}"></option>
+
+				</select>
+			</div>
+
+			<!-- Workorder -->
+			<div class="d-flex align-items-center" style="flex: 1 1 0; min-width: 170px;">
+				<label for="workorderSelect" class="mb-0 mr-2 font-weight-bold"
+					style="white-space: nowrap;">Workorder:</label>
+				<select class="form-control form-control-sm" id="workorderSelect" name="workorder">
+					<option value="">--Workorder--</option>
+				</select>
+
+			</div>
+
+			<!-- Model -->
+			<div class="d-flex align-items-center" style="flex: 1 1 0; min-width: 150px;">
+				<label class="mb-0 font-weight-bold mr-2" style="white-space: nowrap;">Model:</label>
+				<span id="modelText" class="text-truncate" style="overflow: hidden;"></span>
+			</div>
+
+			<!-- Plan -->
+			<div class="d-flex align-items-center" style="flex: 1 1 0; min-width: 120px;">
+				<label class="mb-0 font-weight-bold mr-2" style="white-space: nowrap;">Plan:</label>
+				<span id="planText" class="text-truncate" style="overflow: hidden;"></span>
+			</div>
+
+
+		</div>
+	</form>
+</th:block>

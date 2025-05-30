@@ -6,5 +6,6 @@ import lombok.Data;
 @Data
 public class RequestOrderDetailDto {
 	private String itemCode;
+	private String itemName;
     private BigDecimal qtyrequest;
 }

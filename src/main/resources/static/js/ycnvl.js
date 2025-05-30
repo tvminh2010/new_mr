@@ -24,60 +24,63 @@ $(document).ready(function () {
     });
 
     // Khi chọn Workorder thì lấy Model, Plan và danh sách materials
-    $('#workorderSelect').change(function () {
-        var selectedWo = $(this).val();
-        if (selectedWo) {
-            $.ajax({
-                url: '/ycnvl/workorder-info',
-                type: 'GET',
-                data: { woNumber: selectedWo },
-                success: function (data) {
-                    $('#modelText').text(data.model || '');
-                    $('#planText').text(data.plan || '');
+	$('#workorderSelect').change(function () {
+	    const selectedWo = $(this).val();
+	    if (!selectedWo) {
+	        $('#modelText').text('');
+	        $('#planText').text('');
+	        $('#dataTableBody').empty();
+	        return;
+	    }
 
-                    // Xử lý materials
-                    let materials = data.materials || [];
-                    let $tbody = $('#dataTableBody');
-                    $tbody.empty(); // clear table trước
+	    $.ajax({
+	        url: '/ycnvl/workorder-info',
+	        type: 'GET',
+	        data: { woNumber: selectedWo },
+	        success: function (data) {
+	            $('#modelText').text(data.model || '');
+	            $('#planText').text(data.plan || '');
 
-                    materials.forEach(function (item) {
-						const isZeroStockOrPlanZero = item.instock === 0 || item.plan === 0;
-						const rowClass = isZeroStockOrPlanZero ? 'text-faded' : '';
-						const readonlyAttr = (item.instock === 0 || item.plan === 0) ? 'readonly' : '';
-							
-                        const row = `
-							 <tr class="${rowClass}" data-itemcode="${item.itemCode}">
-                                <td class="align-middle small">${item.category}</td>
-								<td class="align-middle small">${item.itemCode}</td>
-                                <td class="align-middle small">${item.model}</td>
-                                <td class="align-middle small text-left">${item.donggoi}</td>
-                                <td class="align-middle small text-left">${item.qtyPlan || '0'}</td>
-                                <td class="align-middle small text-left">${item.qtyReceive || ''}</td>
-                                <td class="align-middle small text-left">${item.instock || '0'}</td>
-                                <td class="align-middle">
-                                    <div class="input-group input-group-sm">
-                                        <input type="text" class="form-control form-control-sm"  name="soLuong[]" ${readonlyAttr} value="${item.qtyrequest || ''}">
-                                    </div>
-                                </td>
-                            </tr>
-                        `;
-                        $tbody.append(row);
-                    });
-                }
-            });
-        } else {
-            $('#modelText').text('');
-            $('#planText').text('');
-            $('#dataTableBody').empty();
-        }
-    });
-	
+	            const materials = data.materials || [];
+	            const $tbody = $('#dataTableBody');
+	            $tbody.empty(); // clear table trước
+
+				materials.forEach(function (item, index) {
+				    const itemName = item.itemName || item.itemname || 'Không rõ';
+
+				    const isZeroStockOrPlanZero = item.instock === 0 || item.qtyPlan === 0;
+				    const rowClass = isZeroStockOrPlanZero ? 'text-faded' : '';
+				    const readonlyAttr = isZeroStockOrPlanZero ? 'readonly' : '';
+
+				    const row = `
+				        <tr class="${rowClass}" data-itemcode="${item.itemCode}" data-itemname="${itemName}">
+				            <td class="align-middle small">${item.category || ''}</td>
+				            <td class="align-middle small">${item.itemCode || ''}</td>
+				            <td class="align-middle small">${itemName}</td>
+				            <td class="align-middle small text-left">${item.donggoi || ''}</td>
+				            <td class="align-middle small text-left">${item.qtyPlan || '0'}</td>
+				            <td class="align-middle small text-left">${item.qtyReceive || ''}</td>
+				            <td class="align-middle small text-left">${item.instock || '0'}</td>
+				            <td class="align-middle">
+				                <div class="input-group input-group-sm">
+				                    <input type="text" class="form-control form-control-sm" name="soLuong[]" ${readonlyAttr} value="${item.qtyrequest || ''}">
+				                </div>
+				            </td>
+				        </tr>
+				    `;
+				    $tbody.append(row);
+				});
+
+	        },
+	        error: function (xhr, status, error) {
+	            console.error("Lỗi khi lấy thông tin WorkOrder:", error);
+	            alert("Không lấy được dữ liệu WorkOrder!");
+	        }
+	    });
+	});
+
 	
 	/** Lấy dữ liệu đã nhập và đẩy lên server bằng post */
-	
-	
-	
-	
 	$('#dataForm').submit(function (e) {
 	    e.preventDefault();
 		const woNumber = $('#workorderSelect').val();
@@ -86,12 +89,14 @@ $(document).ready(function () {
 	    $('#dataTableBody tr').each(function () {
 	        const $row = $(this);
 	        const itemCode = $row.data('itemcode');
+			const itemName = $row.data('itemname');
 	        const qtyrequest = $row.find('input[name="soLuong[]"]').val();
 
 	        // Bỏ qua nếu không có mã hoặc không nhập số lượng
 	        if (itemCode && qtyrequest) {
 	            dataToSend.push({
 	                itemCode: itemCode,
+					itemName: itemName,
 	                qtyrequest: qtyrequest
 	            });
 	        }

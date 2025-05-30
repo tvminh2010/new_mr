@@ -51,7 +51,7 @@ public class WorkOrderExcelImporter {
                 workOrder.setWoNumber(woNumber);
                 workOrder.setLine(line);
                 workOrder.setModel(model);
-                workOrder.setFgQty(plan);
+                workOrder.setWoQty(plan);
                 workOrder.setUserId("v03510");
                 workOrders.add(workOrder);
             }

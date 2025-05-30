@@ -1,245 +1,28 @@
 package zve.com.vn.controller;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import zve.com.vn.entity.WorkOrder;
-import zve.com.vn.dto.order.request.RequestOrderDetailDto;
-import zve.com.vn.dto.order.request.RequestOrderDto;
-import zve.com.vn.dto.order.response.ResponseOrderDto;
-import zve.com.vn.entity.Order;
-import zve.com.vn.repository.YeuCauNVLItemRepositoryCustom;
-import zve.com.vn.service.WorkOrderExcelImporter;
 import zve.com.vn.service.WorkOrderService;
 
 @Controller
 public class HomeController {
-
-	@Autowired
-	private WorkOrderExcelImporter excelImporter;
-
-	@Autowired
-	private WorkOrderService service;
-
-	@Autowired
-	private YeuCauNVLItemRepositoryCustom nvlRepository;
-
+	
+	private final WorkOrderService service;
 	/* ------------------------------------------------- */
-	@GetMapping({ "/", "/workorder" })
+	public HomeController(WorkOrderService service) {
+	    this.service = service;
+	}
+	/* ------------------------------------------------- */
+	@GetMapping("/")
 	public String index(Model model) {
-
 		WorkOrder workOrder = new WorkOrder();
 		List<WorkOrder> workOrderList = service.findAll();
-		model.addAttribute("workOrder", workOrder);
-		model.addAttribute("workOrderList", workOrderList);
-
-		return "index";
-	}
-
-	/* ------------------------------------------------- */
-	@GetMapping("/workorder/edit")
-	public String editWorkOrder(@RequestParam(value = "wo_id", required = false) String woNumber, Model model) {
-
-		WorkOrder workOrder = new WorkOrder();
-		List<WorkOrder> workOrderList = service.findAll();
-
-		if (woNumber != null) {
-			Optional<WorkOrder> workOrderOpt = service.findByWoNumber(woNumber);
-			if (workOrderOpt.isPresent()) {
-				workOrder = workOrderOpt.get();
-			}
-		}
 		model.addAttribute("workOrder", workOrder);
 		model.addAttribute("workOrderList", workOrderList);
 		return "index";
 	}
-
-	/* ---------------------------------------------------- */
-	@PostMapping("/workorder/import")
-	public String handleWorkOrderImport(@RequestParam("file") MultipartFile file, Model model,
-			RedirectAttributes redirectAttributes) {
-
-		String result = excelImporter.importExcel(file);
-		redirectAttributes.addFlashAttribute("message", result);
-
-		WorkOrder workOrder = new WorkOrder();
-		List<WorkOrder> workOrderList = service.findAll();
-		model.addAttribute("workOrder", workOrder);
-		model.addAttribute("workOrderList", workOrderList);
-		return "redirect:/workorder";
-	}
-
-	/* ------------------------------------------------- */
-	@PostMapping("/workorder/save")
-	public String saveOrEditWorkOrder(@ModelAttribute("workOrder") WorkOrder workOrderForm, BindingResult result,
-			RedirectAttributes redirectAttributes) {
-
-		if (result.hasErrors()) {
-			redirectAttributes.addFlashAttribute("message", "Lưu không thành công!");
-			return "redirect:/workorder";
-		}
-
-		Optional<WorkOrder> existingWorkOrderOpt = service.findByWoNumber(workOrderForm.getWoNumber());
-		WorkOrder workOrder;
-		if (existingWorkOrderOpt.isPresent()) {
-			workOrder = existingWorkOrderOpt.get();
-			workOrder.setLine(workOrderForm.getLine());
-			workOrder.setModel(workOrderForm.getModel());
-			workOrder.setFgQty(workOrderForm.getFgQty());
-		} else {
-			workOrder = new WorkOrder();
-			workOrder.setWoNumber(workOrderForm.getWoNumber());
-			workOrder.setLine(workOrderForm.getLine());
-			workOrder.setModel(workOrderForm.getModel());
-			workOrder.setFgQty(workOrderForm.getFgQty());
-			workOrder.setStatus(1);
-		}
-
-		service.save(workOrder);
-		redirectAttributes.addFlashAttribute("message", "Lưu thành công!");
-		return "redirect:/workorder";
-	}
-
-	/* ------------------------------------------------- */
-	@GetMapping("/workorder/del")
-	public String deleteWorkOrder(@RequestParam("wo_id") String woNumber, RedirectAttributes redirectAttributes) {
-		Optional<WorkOrder> workOrderOpt = service.findByWoNumber(woNumber);
-		if (workOrderOpt.isPresent()) {
-			service.delete(workOrderOpt.get());
-			redirectAttributes.addFlashAttribute("message", "Xóa thành công!");
-		} else {
-			redirectAttributes.addFlashAttribute("message", "Không tìm thấy Work Order!");
-		}
-		return "redirect:/workorder";
-	}
-
-	/* ---------------------------------------------------- */
-	@PostMapping("/workorder/del")
-	public String delete(@RequestParam String id, RedirectAttributes redirectAttributes) {
-		Optional<WorkOrder> workOrderOpt = service.findById(id);
-		if (workOrderOpt.isPresent()) {
-			service.delete(workOrderOpt.get());
-			redirectAttributes.addFlashAttribute("message", "Xóa thành công!");
-		} else {
-			redirectAttributes.addFlashAttribute("message", "Không tìm thấy Work Order!");
-		}
-		return "redirect:/workorder";
-	}
-
-	/* ---------------------------------------------------- */
-	@GetMapping("/ycnvl")
-	public String ycnvl(Model model) {
-		List<String> lines = service.getAllLine();
-		model.addAttribute("lines", lines);
-		return "ycnvl";
-	}
-
-	/* ------------------------------------------------- */
-	@GetMapping("/ycnvl/by-line")
-	@ResponseBody
-	public List<String> getWorkOrdersByLine(@RequestParam("line") String line) {
-		return service.getAllWoNumberByLine(line);
-	}
-
-	/* ------------------------------------------------- */
-	@GetMapping("/ycnvl/workorder-info")
-	@ResponseBody
-	public Map<String, Object> getWorkOrderInfo(@RequestParam("woNumber") String woNumber) {
-		WorkOrder workOrder = service.findByWoNumber(woNumber).orElse(null);
-
-		Map<String, Object> result = new HashMap<>();
-		if (workOrder != null) {
-			result.put("model", workOrder.getModel());
-			result.put("plan", String.valueOf(workOrder.getFgQty()));
-			
-			List<ResponseOrderDto > nvlList = nvlRepository.findAllItems(workOrder.getModel(),workOrder.getFgQty());
-			List<Order> orderList = workOrder.getOrders();
-			
-			Map<String, Order> orderMap = orderList.stream()
-		            .collect(Collectors.toMap(Order::getItemcode, s -> s));
-		
-			
-		   for (ResponseOrderDto item : nvlList) {
-	            Order order = orderMap.get(item.getItemCode());
-	            if (order != null) {
-	                item.setQtyReceive(order.getQtyreceived());
-	                item.setQtyrequest(order.getQtyrequest());
-	            }
-	        } 
-			
-			result.put("materials", nvlList);
-		}
-		return result;
-	}
-
-	/* ------------------------------------------------- */
-	@PostMapping("/ycnvl/workorder-info")
-	@ResponseBody
-	public String saveWorkOrderWithBOM(@RequestBody RequestOrderDto request) {
-	    String woNumber = request.getWoNumber();
-	    List<RequestOrderDetailDto> items = request.getItems();
-
-	    WorkOrder workOrder = service.findByWoNumber(woNumber).orElse(null);
-	    if (workOrder == null) {
-	        return "WorkOrder không tồn tại: " + woNumber;
-	    }
-
-	    // Lấy danh sách order cũ (nếu null thì tạo mới)
-	    List<Order> orders = workOrder.getOrders();
-	    if (orders == null) {
-	    	orders = new ArrayList<>();
-	        workOrder.setOrders(orders);
-	    }
-	    
-	    Map<String, Order> orderMap = orders.stream()
-	        .collect(Collectors.toMap(Order::getItemcode, s -> s));
-
-	    
-	    for (RequestOrderDetailDto dto : items) {
-	        if (dto.getItemCode() == null || dto.getQtyrequest() == null) continue;
-
-	        Order existing = orderMap.get(dto.getItemCode());
-
-	        if (existing != null) {
-	            existing.setQtyrequest(dto.getQtyrequest());
-	            existing.setUpdateDate(new Date());
-	        } else {
-	            Order newOrder = Order.builder()
-	                .itemcode(dto.getItemCode())
-	                .qtyrequest(dto.getQtyrequest())
-	                .qtyreceived(BigDecimal.ZERO)
-	                .status(1)
-	                .createUserId("V03510")
-	                .createdDate(new Date())
-	                .workOrder(workOrder)
-	                .build();
-	            orders.add(newOrder);
-	        }
-	    }
-
-	    service.save(workOrder);
-	    return "Đã lưu thành công " + items.size() + " dòng cho WorkOrder " + woNumber;
-	}
-
-	/* ------------------------------------------------- */
-
 	/* ------------------------------------------------- */
 }
