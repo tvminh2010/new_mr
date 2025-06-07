@@ -1,0 +1,10 @@
+/* Màu nền cho các dòng con (items) */
+.detail-row, .show-more-row, .active-parent-row  {
+  background-color: #f0f0f0; /* Màu nền xám nhạt cho các dòng con */
+}
+
+/* Màu nền cho dòng "Hiển thị thêm..." 
+.show-more-row {
+  background-color: #fafafa; 
+}
+*/

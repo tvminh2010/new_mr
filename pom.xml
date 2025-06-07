@@ -88,6 +88,29 @@
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+		
+		<!-- 
+		<dependency>
+			<groupId>com.progress</groupId>
+		    <artifactId>openedge-jdbc</artifactId>
+		    <version>10.1B</version>
+		    <scope>system</scope>
+		    <systemPath>E:/KNOWLEGE/JV/TOOLs/NewWorkSpace/mr/libs/progress.jar</systemPath>
+		</dependency>
+		-->
+		<!--
+		<dependency>
+		  <groupId>com.progress</groupId>
+		  <artifactId>openedge-jdbc</artifactId>
+		  <version>10.1B</version>
+		</dependency>
+		
+		   <dependency>
+		       <groupId>com.datadirect</groupId>
+		       <artifactId>openedge-jdbc</artifactId>
+		       <version>your-driver-version</version>
+		   </dependency>
+		-->
 	</dependencies>
 
 	<build>
