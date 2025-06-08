@@ -18,7 +18,6 @@ import zve.com.vn.dto.order.response.PickingItemDto;
 import zve.com.vn.dto.order.response.PickingSuggestionGroupDto;
 import zve.com.vn.entity.Order;
 import zve.com.vn.entity.OrderDetail;
-import zve.com.vn.repository.PickingOrderRepository;
 import zve.com.vn.service.OrderService;
 import zve.com.vn.service.PickingSuggestionService;
 
@@ -26,13 +25,10 @@ import zve.com.vn.service.PickingSuggestionService;
 public class OrderController {
 
 	private final OrderService service;
-	private final PickingOrderRepository pickingrepository;
 	private final PickingSuggestionService pickingSuggestionService;
-	
 	/* ------------------------------------------------- */
-	public OrderController(OrderService service, PickingOrderRepository pickingrepository, PickingSuggestionService pickingSuggestionService) {
+	public OrderController(OrderService service, PickingSuggestionService pickingSuggestionService) {
 		this.service = service;
-		this.pickingrepository = pickingrepository;
 		this.pickingSuggestionService = pickingSuggestionService;
 	}
 	/* ------------------------------------------------- */

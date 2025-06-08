@@ -1,10 +1,7 @@
 package zve.com.vn.entity;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -12,7 +9,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -23,27 +19,25 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 @Entity
-@Table(name = "tbl_order_dtl")
+@Table(name = "tbl_order_dtl_item")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class OrderDetail {
+public class OrderDetailItem {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Long id;
+	@GeneratedValue(strategy = GenerationType.AUTO) 
+	String id;
+	
 	String itemcode;
-	String itemname;
-	BigDecimal qtyreceived;
-	BigDecimal qtyrequest;
+	String serialNo;
+	BigDecimal stockqty;
+	BigDecimal receivedqty;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "order_id")
-	Order order;
-	
-	@OneToMany(mappedBy = "orderDetail", cascade = CascadeType.ALL, orphanRemoval = true)
-	List<OrderDetailItem> orderDetailItems = new ArrayList<>();
+	@JoinColumn(name = "order_dtl_id")
+	OrderDetail orderDetail;
 }
