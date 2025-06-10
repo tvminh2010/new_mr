@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import zve.com.vn.dto.order.response.PickingSerialNo;
 import zve.com.vn.dto.order.response.PickingSuggestionGroupDto;
 import zve.com.vn.repository.PickingSuggestionRepository;
 
@@ -17,6 +18,10 @@ public class PickingSuggestionService {
     /* ---------------------------------------------------------- */
     public List<PickingSuggestionGroupDto> findSuggestionsByProductNos(List<String> productNos) {
         return repository.findSuggestionsByProductNos(productNos);
+    }
+    /* ---------------------------------------------------------- */
+    public PickingSerialNo getStockItemBySerialNo(String serialNo) {
+    	return repository.getStockItemBySerialNo(serialNo);
     }
     /* ---------------------------------------------------------- */
 }

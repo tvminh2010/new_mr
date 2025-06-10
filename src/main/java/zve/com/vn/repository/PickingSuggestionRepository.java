@@ -1,15 +1,17 @@
 package zve.com.vn.repository;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import zve.com.vn.dto.order.response.PickingSerialNo;
 import zve.com.vn.dto.order.response.PickingSuggestionGroupDto;
 import zve.com.vn.dto.order.response.PickingSuggestionItem;
 
@@ -52,22 +54,46 @@ public class PickingSuggestionRepository {
         List<Map<String, Object>> rows = jdbc.queryForList(sql);
         Map<String, List<Map<String, Object>>> grouped = rows.stream()
                 .collect(Collectors.groupingBy(row -> (String) row.get("product_no")));
+        
+        List<PickingSuggestionGroupDto> result = grouped.keySet().stream()
+        	    .sorted()
+        	    .map(productNo -> {
+        	        List<Map<String, Object>> groupRows = grouped.get(productNo);
+        	        String categoryCode = (String) groupRows.get(0).get("category_code");
+        	        String productName  = (String) groupRows.get(0).get("product_name");
 
-        List<PickingSuggestionGroupDto> result = new ArrayList<>();
+        	        List<PickingSuggestionItem> items = groupRows.stream()
+        	            .map(row -> new PickingSuggestionItem(
+        	                (String) row.get("serial_no"),
+        	                (String) row.get("loc_code"),
+        	                (BigDecimal) row.get("qty"),
+        	                row.get("date_in") != null
+        	                    ? ((Timestamp) row.get("date_in")).toLocalDateTime().toLocalDate()
+        	                    : null
+        	            ))
+        	            .toList();
 
-        for (String productNo : grouped.keySet()) {
-            List<Map<String, Object>> groupRows = grouped.get(productNo);
-            String categoryCode = (String) groupRows.get(0).get("category_code");
-            String productName  = (String) groupRows.get(0).get("product_name");
-            List<PickingSuggestionItem> items = groupRows.stream().map(row -> new PickingSuggestionItem(
-            	    (String) row.get("serial_no"),
-            	    (String) row.get("loc_code"),
-            	    (BigDecimal) row.get("qty"),
-            	    row.get("date_in") != null ? ((java.sql.Timestamp) row.get("date_in")).toLocalDateTime().toLocalDate() : null
-            	)).toList();
-            result.add(new PickingSuggestionGroupDto(categoryCode, productNo, productName, items));
-        }
+        	        return new PickingSuggestionGroupDto(categoryCode, productNo, productName, items);
+        	    })
+        	    .toList();
+        
         return result;
+    }
+    /* --------------------------------------------------------------- */
+    public PickingSerialNo getStockItemBySerialNo(String serialNo) {
+        String sql = "SELECT pi.qty, pi.product_no, pi.serial_no " +
+                     "FROM public.product_instance pi WHERE pi.serial_no = ?";
+        try {
+            return jdbc.queryForObject(sql, (rs, rowNum) -> {
+                PickingSerialNo item = new PickingSerialNo();
+                item.setItemCode(rs.getString("product_no"));         // map vào itemCode
+                item.setSerialNo(rs.getString("serial_no"));
+                item.setPickingqty(rs.getBigDecimal("qty"));          // map vào pickingqty
+                return item;
+            }, serialNo);
+        } catch (EmptyResultDataAccessException e) {
+            return null; // không tìm thấy serial
+        }
     }
     /* --------------------------------------------------------------- */
 }

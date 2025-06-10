@@ -52,13 +52,6 @@ $(document).ready(function () {
     } 
   });
 
-
-
-
-  
-  
-  
-  
   // Xử lý nút "Hiển thị thêm..."
   $('.show-more-link').on('click', function () {
     const idx = $(this).data('index');
@@ -77,5 +70,14 @@ $(document).ready(function () {
     }
   });
 
+  /*----------- Focus textbox trên tab "Scan & Pick Items" -------------*/
+  $('#scan-tab').on('shown.bs.tab', function (e) {
+    const input = $('input[name="scannedSerial"]');
+    input.focus();
+  });
+  /*----------- End focus textbox trên tab "Scan & Pick Items" ---------*/
   console.log("✅ orderpicking.js đã load xong");
 });
+
+
+

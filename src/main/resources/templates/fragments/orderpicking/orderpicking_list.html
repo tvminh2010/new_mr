@@ -8,7 +8,7 @@
 							<th scope="col">Mã NVL</th>
 							<th scope="col">Tên NVL</th>
 							<th scope="col">SL Yêu cầu</th>
-							<th scope="col">SerialNo</th>
+							<!-- <th scope="col">SerialNo</th> -->
 							<th scope="col">SL nhặt</th>
 						</tr>
 					</thead>
@@ -18,7 +18,7 @@
 							<td th:text="${item.itemCode}"></td>
 							<td class="text-left" th:text="${item.itemName}"></td>
 							<td class="text-left" th:text="${item.requestqty?.intValue()}"></td>
-							<td>-</td>
+							<!-- <td>-</td> -->
 							<td>
 								<input type="number" name="pickingQty[0]" min="0"
 									class="form-control form-control-sm text-right" readonly />
@@ -26,10 +26,11 @@
 						</tr>
 					</tbody>
 					
-					
 				</table>
 				<div class="input-group mb-3">
-					<input type="text" class="form-control" name="scannedSerial" placeholder="Quét số Serial"
+					<input type="text" class="form-control" 
+						name="scannedSerial" 
+						placeholder="Quét số Serial" 
 						aria-describedby="saveButton">
 					<div class="input-group-append">
 						<button class="btn btn-outline-secondary" type="button" id="scanBtn">Save</button>

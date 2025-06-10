@@ -34,8 +34,9 @@ public class OrderDetailItem {
 	
 	String itemcode;
 	String serialNo;
-	BigDecimal stockqty;
-	BigDecimal receivedqty;
+	BigDecimal stockQty;
+	BigDecimal pickingQty;
+	BigDecimal receivedQty;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "order_dtl_id")

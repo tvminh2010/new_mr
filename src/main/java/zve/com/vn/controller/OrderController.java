@@ -1,6 +1,7 @@
 package zve.com.vn.controller;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,10 +12,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import zve.com.vn.dto.order.response.PickingItemDto;
+import zve.com.vn.dto.order.response.PickingSerialNo;
 import zve.com.vn.dto.order.response.PickingSuggestionGroupDto;
 import zve.com.vn.entity.Order;
 import zve.com.vn.entity.OrderDetail;
@@ -85,6 +88,7 @@ public class OrderController {
 	            .findSuggestionsByProductNos(productNos);
 
 	    List<PickingItemDto> pickingItems = orderDetails.stream()
+	    	.sorted(Comparator.comparing(OrderDetail::getItemcode))
 	        .map(detail -> new PickingItemDto(
 	            detail.getItemcode(),   		//Item Code     
 	            detail.getItemname(),  			//Item Name 
@@ -102,5 +106,20 @@ public class OrderController {
 	    return "orderpicking";
 	}
 
+	/* ------------------------------------------------- */
+	@PostMapping("/picking/scan-serial")
+	@ResponseBody
+	public Map<String, Object> scanSerial(@RequestBody Map<String, String> request) {
+	    String serial = request.get("serial");
+	    boolean success = true; 
+	    PickingSerialNo pickingSerialNo = pickingSuggestionService.getStockItemBySerialNo(serial);
+	    
+	    String message = "SerialNo " + serial + ", với Số lượng: "  + pickingSerialNo.getPickingqty() +" đã được xử lý.";
+	    Map<String, Object> response = new HashMap<>();
+	    response.put("success", success);
+	    response.put("message", message);
+	    response.put("pickingSerialNo", pickingSerialNo);
+	    return response;
+	}
 	/* ------------------------------------------------- */
 }
