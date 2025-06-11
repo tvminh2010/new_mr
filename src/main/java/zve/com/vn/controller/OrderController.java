@@ -1,6 +1,7 @@
 package zve.com.vn.controller;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +21,10 @@ import zve.com.vn.dto.order.response.PickingItemDto;
 import zve.com.vn.dto.order.response.PickingSerialNo;
 import zve.com.vn.dto.order.response.PickingSuggestionGroupDto;
 import zve.com.vn.entity.Order;
-import zve.com.vn.entity.OrderDetail;
+import zve.com.vn.entity.OrderItem;
+import zve.com.vn.entity.OrderItemSerialNo;
+import zve.com.vn.repository.OrderItemRepository;
+import zve.com.vn.repository.OrderItemSerialNoRepository;
 import zve.com.vn.service.OrderService;
 import zve.com.vn.service.PickingSuggestionService;
 
@@ -29,10 +33,18 @@ public class OrderController {
 
 	private final OrderService service;
 	private final PickingSuggestionService pickingSuggestionService;
+	private final OrderItemSerialNoRepository orderItemSerialNoRepository;
+	private final OrderItemRepository orderItemRepository;
 	/* ------------------------------------------------- */
-	public OrderController(OrderService service, PickingSuggestionService pickingSuggestionService) {
+	public OrderController(
+			OrderService service, 
+			PickingSuggestionService pickingSuggestionService, 
+			OrderItemSerialNoRepository orderItemSerialNoRepository,
+			OrderItemRepository orderItemRepository) {
 		this.service = service;
 		this.pickingSuggestionService = pickingSuggestionService;
+		this.orderItemSerialNoRepository = orderItemSerialNoRepository;
+		this.orderItemRepository = orderItemRepository;
 	}
 	/* ------------------------------------------------- */
 	@GetMapping("/quanlyorder")
@@ -76,27 +88,25 @@ public class OrderController {
 	        return "orderpicking";
 	    }
 
-	    List<OrderDetail> orderDetails = order.getOrderDetails();
+	    List<OrderItem> orderItems = order.getOrderItems();
 	    
 	    // Lấy danh sách mã SP
-	    List<String> productNos = orderDetails.stream()
-	        .map(OrderDetail::getItemcode)
+	    List<String> productNos = orderItems.stream()
+	        .map(OrderItem::getItemcode)
 	        .distinct()
 	        .toList();
 	    
 	    List<PickingSuggestionGroupDto> pickingSuggestions = pickingSuggestionService
 	            .findSuggestionsByProductNos(productNos);
 
-	    List<PickingItemDto> pickingItems = orderDetails.stream()
-	    	.sorted(Comparator.comparing(OrderDetail::getItemcode))
+	    List<PickingItemDto> pickingItems = orderItems.stream()
+	    	.sorted(Comparator.comparing(OrderItem::getItemcode))
 	        .map(detail -> new PickingItemDto(
 	            detail.getItemcode(),   		//Item Code     
-	            detail.getItemname(),  			//Item Name 
-	            null,							//SerialNo 
-	            null,    						//location                     
-	            BigDecimal.ZERO,  				//Balance            
+	            detail.getItemname(),  			//Item Name                               
 	            detail.getQtyrequest(),  		//Balance    
-	            BigDecimal.ZERO     			//PickingQty         
+	            detail.getTotalPickingQtyByItemCode(detail.getItemcode())
+	            //BigDecimal.ZERO     			//PickingQty         
 	        ))
 	        .toList();
 
@@ -109,17 +119,68 @@ public class OrderController {
 	/* ------------------------------------------------- */
 	@PostMapping("/picking/scan-serial")
 	@ResponseBody
-	public Map<String, Object> scanSerial(@RequestBody Map<String, String> request) {
-	    String serial = request.get("serial");
-	    boolean success = true; 
-	    PickingSerialNo pickingSerialNo = pickingSuggestionService.getStockItemBySerialNo(serial);
-	    
-	    String message = "SerialNo " + serial + ", với Số lượng: "  + pickingSerialNo.getPickingqty() +" đã được xử lý.";
+	public Map<String, Object> scanSerial(@RequestBody Map<String, Object> request) {
+	    String serial = (String) request.get("serial");
+	    List<String> itemCodes = (List<String>) request.get("itemCodes");
+
 	    Map<String, Object> response = new HashMap<>();
-	    response.put("success", success);
+	    PickingSerialNo pickingSerialNo = pickingSuggestionService.getStockItemBySerialNo(serial);
+
+	    if (pickingSerialNo == null) {
+	        response.put("success", false);
+	        response.put("message", "❌ Không tồn tại mã hàng với số Serial: '" + serial + "' trong hệ thống.");
+	        return response;
+	    }
+
+	    String itemCode = pickingSerialNo.getItemCode();
+	    if (itemCodes == null || itemCodes.stream().noneMatch(code -> code.equalsIgnoreCase(itemCode))) {
+	        response.put("success", false);
+	        response.put("message", "⚠️ SerialNo " + serial + " có mã itemCode `" + itemCode + "` không khớp với danh sách cần nhặt.");
+	        return response;
+	    }
+
+	    String message = "✅ SerialNo " + serial + ", với Số lượng: " + pickingSerialNo.getPickingqty() + " đã được xử lý.";
+	    response.put("success", true);
 	    response.put("message", message);
 	    response.put("pickingSerialNo", pickingSerialNo);
 	    return response;
 	}
+	/* ------------------------------------------------- */
+	@PostMapping("/picking/save-serials")
+	@ResponseBody
+	public Map<String, Object> saveScannedSerials(@RequestBody List<PickingSerialNo> scannedSerials) {
+	    List<OrderItemSerialNo> entities = new ArrayList<>();
+	    for (PickingSerialNo dto : scannedSerials) {
+	        OrderItemSerialNo existingEntity = orderItemSerialNoRepository.findBySerialNo(dto.getSerialNo()).orElse(null);
+
+	        if (existingEntity == null) {
+	            OrderItem orderItem = orderItemRepository.findByItemcode(dto.getItemCode()).orElse(null);
+	            if (orderItem == null) {
+	                continue;
+	            }
+
+	            existingEntity = OrderItemSerialNo.builder()
+	                    .itemcode(dto.getItemCode())
+	                    .serialNo(dto.getSerialNo())
+	                    .pickingQty(dto.getPickingqty())
+	                    .receivedQty(BigDecimal.ZERO)
+	                    .orderItem(orderItem)
+	                    .build();
+	        } else {
+	            existingEntity.setPickingQty(dto.getPickingqty());
+	            existingEntity.setReceivedQty(BigDecimal.ZERO); 
+	        }
+
+	        entities.add(existingEntity);
+	    }
+	    orderItemSerialNoRepository.saveAll(entities);
+	    return Map.of(
+	        "success", true,
+	        "saved", entities.size(),
+	        "message", "Đã lưu " + entities.size() + " serial vào hệ thống."
+	    );
+	}
+
+
 	/* ------------------------------------------------- */
 }

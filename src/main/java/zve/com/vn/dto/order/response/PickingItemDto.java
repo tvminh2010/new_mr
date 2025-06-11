@@ -19,9 +19,6 @@ import lombok.experimental.FieldDefaults;
 public class PickingItemDto {
 	String itemCode;
 	String itemName;
-	String location;
-	String serialNo;
-	BigDecimal balanceqty;
 	BigDecimal requestqty;
 	BigDecimal pickingqty;
 }

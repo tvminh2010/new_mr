@@ -23,27 +23,39 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 @Entity
-@Table(name = "tbl_order_dtl")
+@Table(name = "tbl_order_item")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class OrderDetail {
+public class OrderItem {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
 	String itemcode;
 	String itemname;
-	BigDecimal qtyreceived;
+	//BigDecimal qtyreceived;
 	BigDecimal qtyrequest;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "order_id")
 	Order order;
 	
-	@OneToMany(mappedBy = "orderDetail", cascade = CascadeType.ALL, orphanRemoval = true)
-	List<OrderDetailItem> orderDetailItems = new ArrayList<>();
+	@OneToMany(mappedBy = "orderItem", cascade = CascadeType.ALL, orphanRemoval = true)
+	List<OrderItemSerialNo> orderItemSerialNos = new ArrayList<>();
+	
+	/* ------------------------------------------------- */
+	public BigDecimal getTotalPickingQtyByItemCode(String itemCode) {
+	    return orderItemSerialNos.stream()
+	            .filter(orderItemSerialNo -> orderItemSerialNo.getItemcode().equals(itemCode))  // Lọc theo itemCode
+	            .map(OrderItemSerialNo::getPickingQty)  // Lấy pickingQty
+	            .filter(pickingQty -> pickingQty != null)  // Loại bỏ null
+	            .reduce(BigDecimal.ZERO, BigDecimal::add);  // Tính tổng
+	}
+	/* ------------------------------------------------- */
+
+
 }

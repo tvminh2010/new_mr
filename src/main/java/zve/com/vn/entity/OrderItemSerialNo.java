@@ -19,18 +19,18 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 @Entity
-@Table(name = "tbl_order_dtl_item")
+@Table(name = "tbl_item_by_serial")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class OrderDetailItem {
+public class OrderItemSerialNo {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO) 
-	String id;
+	Long id;
 	
 	String itemcode;
 	String serialNo;
@@ -39,6 +39,6 @@ public class OrderDetailItem {
 	BigDecimal receivedQty;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "order_dtl_id")
-	OrderDetail orderDetail;
+	@JoinColumn(name = "order_item_id")
+	OrderItem orderItem;
 }

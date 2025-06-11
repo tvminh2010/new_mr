@@ -51,5 +51,5 @@ public class Order {
 	WorkOrder workOrder;
 	
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-	List<OrderDetail> orderDetails = new ArrayList<>();
+	List<OrderItem> orderItems = new ArrayList<>();
 }

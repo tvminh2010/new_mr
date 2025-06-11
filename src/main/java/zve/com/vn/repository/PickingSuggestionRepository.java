@@ -82,7 +82,7 @@ public class PickingSuggestionRepository {
     /* --------------------------------------------------------------- */
     public PickingSerialNo getStockItemBySerialNo(String serialNo) {
         String sql = "SELECT pi.qty, pi.product_no, pi.serial_no " +
-                     "FROM public.product_instance pi WHERE pi.serial_no = ?";
+                     "FROM public.product_instance pi WHERE pi.serial_no = ? AND pi.qty > 0";
         try {
             return jdbc.queryForObject(sql, (rs, rowNum) -> {
                 PickingSerialNo item = new PickingSerialNo();

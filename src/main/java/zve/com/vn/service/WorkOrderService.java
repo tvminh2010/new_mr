@@ -1,7 +1,9 @@
 package zve.com.vn.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+
 import zve.com.vn.entity.WorkOrder;
 
 public interface WorkOrderService {
@@ -14,4 +16,5 @@ public interface WorkOrderService {
 	boolean existsByWoNumber(String woNumber);
 	List<String> getAllLine();
 	List<String> getAllWoNumberByLine(String line);
+	BigDecimal calculateTotalReceivedQtyByItemCode(WorkOrder workOrder, String itemCode);
 }

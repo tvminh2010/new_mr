@@ -1,11 +1,14 @@
 package zve.com.vn.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import zve.com.vn.entity.OrderItemSerialNo;
 import zve.com.vn.entity.WorkOrder;
 import zve.com.vn.repository.WorkOrderRepository;
 
@@ -62,6 +65,18 @@ public class WorkOrderServiceImpl implements WorkOrderService {
 	@Override
 	public Optional<WorkOrder> findById(String id) {
 		return repository.findById(id);
+	}
+	/* ---------------------------------------------------- */
+	@Transactional
+	@Override
+	public BigDecimal calculateTotalReceivedQtyByItemCode(WorkOrder workOrder, String itemCode) {
+		  return workOrder.getOrders().stream()
+                .flatMap(order -> order.getOrderItems().stream())
+                .flatMap(orderItem -> orderItem.getOrderItemSerialNos().stream())
+                .filter(orderItemSerialNo -> orderItemSerialNo.getItemcode().equals(itemCode))
+                .map(OrderItemSerialNo::getReceivedQty)
+                .filter(receivedQty -> receivedQty != null)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 	}
 	/* ---------------------------------------------------- */
 }

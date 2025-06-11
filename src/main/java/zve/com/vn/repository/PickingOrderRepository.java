@@ -46,10 +46,7 @@ public class PickingOrderRepository {
 				(rs, rowNum) -> new PickingItemDto(
 						rs.getString("product_no"), 
 						rs.getString("product_name"), 
-						rs.getString("loc_code"),
-						rs.getString("serial_no"), 
 						rs.getBigDecimal("qty"), 
-						BigDecimal.ZERO, 
 						BigDecimal.ZERO),
 				productNo);
 	}
