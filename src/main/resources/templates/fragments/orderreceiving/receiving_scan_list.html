@@ -1,4 +1,4 @@
-<th:block th:fragment="orderpicking_list">
+<th:block th:fragment="receiving_scan_list">
 	<div class="col-12">
 		<div class="table-responsive">
 			<form id="pickingForm" method="post">
@@ -10,6 +10,7 @@
 							<th scope="col">SL Yêu cầu</th>
 							<!-- <th scope="col">SerialNo</th> -->
 							<th scope="col">SL nhặt</th>
+							<th scope="col">SL nhận</th>
 						</tr>
 					</thead>
 
@@ -18,13 +19,12 @@
 							<td th:text="${item.itemCode}"></td>
 							<td class="text-left" th:text="${item.itemName}"></td>
 							<td class="text-left" th:text="${item.requestqty?.intValue()}"></td>
-							<!-- <td>-</td> -->
+							<td class="text-left" th:text="${item.pickingqty?.intValue()}"></td>
 							<td>
 								<input type="number" 
-									name="pickingQty[[${iterStat.index}]]" 
+									name="receivingQty[[${iterStat.index}]]" 
 									min="0"
 									class="form-control form-control-sm text-right" 
-									th:value="${item.pickingqty}" 
 									readonly />
 							</td>
 						</tr>
@@ -35,12 +35,12 @@
 				<div class="input-group mb-3">
 					<input type="text" class="form-control" 
 						name="scannedSerial" 
-						placeholder="Quét số Serial" 
+						placeholder="Quét số Serial để nhận hàng" 
 						aria-describedby="saveButton">
 					<div class="input-group-append">
 						<button class="btn btn-outline-secondary mr-3" type="button" id="saveAllBtn">Lưu lại</button>
 					</div>
-					<button class="btn btn-outline-primary" type="button" id="endPickingOrder">Kết thúc</button>
+					<button class="btn btn-outline-primary" type="button" id="endPickingOrder">Hoàn tất nhận hàng</button>
 				</div>
 				<input type="hidden" id="orderId" th:value="${order.id}" />
 			</form>

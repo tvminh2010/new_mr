@@ -212,4 +212,32 @@ public class OrderController {
 		return ResponseEntity.notFound().build();
 	}
 	/* ------------------------------------------------- */
+	@GetMapping("/order/receiving")
+	public String orderReceiving(@RequestParam(value = "id", required = false) Long orderId, Model model) {
+	    List<Order> orderLists = service.findByStatus(3);
+	    model.addAttribute("orderLists", orderLists);
+	    if (orderId == null) {
+	        return "orderreceiving";
+	    }
+	    Optional<Order> orderOpt = service.findById(orderId);
+	    if (orderOpt.isEmpty()) {
+	        return "orderreceiving";
+	    }
+	    Order order = orderOpt.get();
+	    List<OrderItem> orderItems = order.getOrderItems();
+	    List<PickingItemDto> pickingItems = orderItems.stream()
+	        .sorted(Comparator.comparing(OrderItem::getItemcode))
+	        .map(detail -> new PickingItemDto(
+	            detail.getItemcode(),
+	            detail.getItemname(),
+	            detail.getQtyrequest(),
+	            detail.getTotalPickingQtyByItemCode(detail.getItemcode())
+	        ))
+	        .toList();
+	    model.addAttribute("order", order);
+	    model.addAttribute("pickingItems", pickingItems);
+	    
+	    return "orderreceiving";
+	}
+	/* ------------------------------------------------- */
 }
