@@ -1,4 +1,18 @@
 $(document).ready(function () {
+	const endPickingOrderBtn = $('#endPickingOrder')[0];
+	//endPickingOrderBtn.disabled = true;
+	function updateEndPickingOrderBtnStatus() {
+	       let hasValidInput = false;
+	       $("input[name^='pickingQty']").each(function () {
+	           const val = parseFloat($(this).val());
+	           if (!isNaN(val) && val > 0) {
+	               hasValidInput = true;
+	               return false; 
+	           }
+	       });
+	       endPickingOrderBtn.disabled = !hasValidInput;
+	   }
+	   
 	$('#endPickingOrder').on('click', function () {
 		let hasInvalidQty = false;
 		$("input[name^='pickingQty']").each(function () {
@@ -26,4 +40,6 @@ $(document).ready(function () {
 			}
 		});
 	});
+	
+	updateEndPickingOrderBtnStatus();
 });

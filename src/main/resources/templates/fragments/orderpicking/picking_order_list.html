@@ -1,0 +1,50 @@
+<th:block th:fragment="picking_order_list">
+	<!-- Nội dung chính -->
+	<div class="col-12 pt-3">
+		<style>
+			.icon-status {
+				color: #4e3f2c;
+				font-size: 1.1rem;
+				margin-left: 0.25rem;
+				margin-right: 0.25rem;
+			}
+		</style>
+
+		<div class="table-responsive">
+			<table id="workOrderTable" class="table table-sm table-hover table-bordered text-nowrap">
+				<thead class="text-center">
+					<tr>
+						<th scope="col">#</th>
+						<th scope="col">TIME</th>
+						<th scope="col">WORKORDER</th>
+						<th scope="col">LINE</th>
+						<th scope="col">MODEL</th>
+						<th scope="col">ORDER</th>
+						<th scope="col">STATUS</th>
+						<th scope="col">NHẶT HÀNG</th>
+					</tr>
+				</thead>
+
+				<tbody class="text-center">
+					<tr th:each="order, iterStat : ${orderLists}"
+						th:classappend="'table-warning'"
+						th:attr="data-id=${order.id}">
+						<td scope="row" th:text="${iterStat.index + 1}"></td>
+						<td th:text="${#dates.format(order.createdDate, 'HH:mm')}"></td>
+						<td th:text="${order.workOrder.woNumber}"></td>
+						<td th:text="${order.workOrder.line}"></td>
+						<td th:text="${order.workOrder.model}"></td>
+						<td th:text="${order.orderName}"></td>
+						<td class="status-text">2. Chờ nhặt hàng...</td>
+						<td class="status-cell">
+							<a th:href="@{/order/picking(id=${order.id})}"
+							   th:data-id="${order.id}">
+							   <i class="fas fa-hand-point-right icon-status" title="Tiến hành nhặt hàng"></i>
+							</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</th:block>

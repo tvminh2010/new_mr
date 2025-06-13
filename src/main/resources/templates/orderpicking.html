@@ -1,46 +1,56 @@
 <!doctype html>
 <html lang="vi">
+
 <head th:replace="~{fragments/header :: header}"></head>
+
 <body>
 	<nav th:replace="~{fragments/topmenu :: topmenu}"></nav>
-	<main th:if="${order == null}" role="main" class="container-fluid" style="margin-top: 60px;">
-		<h4>Danh sách order chờ nhặt hàng!</h4>
-	</main>
-	<main th:if="${order != null}" role="main" class="container-fluid" style="margin-top: 56px;">
-		<!-- Thông tin tổng quan -->
-		<div class="row mb-2" style="margin-top: 80px;">
-			<div class="col-6 col-md-3 mb-2">
-				<strong class="pr-2">Line:</strong> <span th:text="${order.workOrder.line}"></span>
-			</div>
-			<div class="col-6 col-md-3 mb-2 text-left text-lg-center">
-				<strong class="pr-2">WorkOrder:</strong> <span th:text="${order.workOrder.woNumber}"></span>
-			</div>
-			<div class="col-6 col-md-3 mb-2 text-left text-lg-center">
-				<strong class="pr-2">Model:</strong> <span th:text="${order.workOrder.model}"></span>
-			</div>
-			<div class="col-6 col-md-3 mb-2 text-md-right">
-				<strong class="pr-2">Kế hoạch:</strong> <span th:text="${order.workOrder.woQty}"></span>
-			</div>
-		</div>
 
-		<!-- Thông tin bổ sung: Order name + Ngày tạo -->
-		<div class="row">
-			<div class="col-12 mt-2 mb-3">
-				<strong class="mr-2">Order:
-					<span class="mr-5 text-success" th:text="${order.orderName}"></span>
-				</strong>
-				<strong>Created at:
-					<span class="text-success" th:text="${#dates.format(order.createdDate, 'dd/MM ~ HH:mm')}"></span>
-				</strong>
-				<hr />
+	<main role="main" class="container-fluid" style="margin-top: 56px;">
+
+		<!-- Thông tin tổng quan -->
+		<th:block th:if="${order != null}">
+			<div class="row mb-2" style="margin-top: 80px;">
+				<div class="col-6 col-md-3 mb-2">
+					<strong class="pr-2">Line:</strong> <span th:text="${order.workOrder.line}"></span>
+				</div>
+				<div class="col-6 col-md-3 mb-2 text-left text-lg-center">
+					<strong class="pr-2">WorkOrder:</strong> <span th:text="${order.workOrder.woNumber}"></span>
+				</div>
+				<div class="col-6 col-md-3 mb-2 text-left text-lg-center">
+					<strong class="pr-2">Model:</strong> <span th:text="${order.workOrder.model}"></span>
+				</div>
+				<div class="col-6 col-md-3 mb-2 text-md-right">
+					<strong class="pr-2">Kế hoạch:</strong> <span th:text="${order.workOrder.woQty}"></span>
+				</div>
 			</div>
-		</div>
+
+			<!-- Thông tin bổ sung: Order name + Ngày tạo -->
+			<div class="row">
+				<div class="col-12 mt-2 mb-3">
+					<strong class="mr-2">Order:
+						<span class="mr-5 text-success" th:text="${order.orderName}"></span>
+					</strong>
+					<strong>Created at:
+						<span class="text-success"
+							th:text="${#dates.format(order.createdDate, 'dd/MM ~ HH:mm')}"></span>
+					</strong>
+					<hr />
+				</div>
+			</div>
+		</th:block>
 
 		<!-- Tabs -->
 		<ul class="nav nav-tabs mb-3" id="pickingTabs" role="tablist">
 			<li class="nav-item">
-				<a class="nav-link active" id="instruction-tab" data-toggle="tab" href="#instruction" role="tab"
-					aria-controls="instruction" aria-selected="true">
+				<a class="nav-link active" id="chooseorder-tab" data-toggle="tab" href="#chooseorder" role="tab"
+					aria-controls="chooseorder" aria-selected="true">
+					🧾 Danh sách order cần nhặt hàng
+				</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" id="instruction-tab" data-toggle="tab" href="#instruction" role="tab"
+					aria-controls="instruction" aria-selected="false">
 					📋 Picking Instructions
 				</a>
 			</li>
@@ -52,14 +62,27 @@
 			</li>
 		</ul>
 
+		<!-- Tab nội dung -->
 		<div class="tab-content" id="pickingTabContent">
-			<!-- Tab 1: Picking Instructions -->
-			<div class="tab-pane fade show active" id="instruction" role="tabpanel" aria-labelledby="instruction-tab">
-				<!-- Hướng dẫn nhặt hàng -->
+			<!-- Tab 1: Danh sách order cần nhặt hàng -->
+			<div class="tab-pane fade show active" id="chooseorder" role="tabpanel" aria-labelledby="chooseorder-tab">
 				<div class="card">
 					<div class="card-body">
-						<h5 class="card-title">📍 Hướng dẫn nhặt hàng</h5>
+						<h5 class="card-title">📌 Chọn order để nhặt hàng</h5>
+						<div class="row">
+							<div th:replace="~{fragments/orderpicking/picking_order_list :: picking_order_list}"></div>
+						</div>
+					</div>
+				</div>
+			</div>
 
+			<!-- Tab 2: Picking Instructions -->
+			<div class="tab-pane fade" id="instruction" role="tabpanel" aria-labelledby="instruction-tab">
+				<p th:if="${order != null and order.status != 2}">Chọn đúng order cần nhặt hàng!</p>
+				<p th:if="${order == null}">Chọn order để nhặt hàng!</p>
+				<div th:if="${order != null and order.status == 2}" class="card">
+					<div class="card-body">
+						<h5 class="card-title">📍 Hướng dẫn nhặt hàng</h5>
 						<div class="table-responsive">
 							<table class="table table-sm table-bordered table-hover text-nowrap">
 								<thead class="thead-light text-center">
@@ -74,69 +97,66 @@
 										<th>Action</th>
 									</tr>
 								</thead>
-								
-								
-								
 								<tbody>
-								  <th:block th:each="group, groupStat : ${pickingSuggestions}">
-								    <!-- Dòng cha (luôn hiển thị) -->
-								    <tr th:class="'parent-row-' + ${groupStat.index}">
-								      <td th:text="${group.itemCategory}"></td>
-								      <td th:text="${group.itemCode}"></td>
-									  <td th:text="${group.productName}"></td>
-								      <td th:text="${group.items[0].locCode}"></td>
-								      <td th:text="${group.items[0].qty}"></td>
-								      <td th:text="${group.items[0].serialNo}"></td>
-								      <td th:text="${#temporals.format(group.items[0].dateIn, 'dd/MM/yyyy')}"></td>
-								      <td class="text-center">
-								        <a href="javascript:void(0);" class="toggle-detail-btn" th:attr="data-index=${groupStat.index}">
-								          <i class="fas fa-plus"></i>
-								        </a>
-								      </td>
-								    </tr>
+									<th:block th:each="group, groupStat : ${pickingSuggestions}">
+										<tr th:class="'parent-row-' + ${groupStat.index}">
+											<td th:text="${group.itemCategory}"></td>
+											<td th:text="${group.itemCode}"></td>
+											<td th:text="${group.productName}"></td>
+											<td th:text="${group.items[0].locCode}"></td>
+											<td th:text="${group.items[0].qty}"></td>
+											<td th:text="${group.items[0].serialNo}"></td>
+											<td th:text="${#temporals.format(group.items[0].dateIn, 'dd/MM/yyyy')}">
+											</td>
+											<td class="text-center">
+												<a href="javascript:void(0);" class="toggle-detail-btn"
+													th:attr="data-index=${groupStat.index}">
+													<i class="fas fa-plus"></i>
+												</a>
+											</td>
+										</tr>
 
-								    <!-- Các dòng con (ẩn theo mặc định) -->
-								    <tr th:each="item, itemStat : ${group.items}"
-								        th:if="${itemStat.index > 0}"
-								        th:id="'detail-row-' + ${groupStat.index} + '-' + ${itemStat.index}"
-								        th:class="'d-none detail-row detail-group-' + ${groupStat.index} + ' ' + (${itemStat.index ge 6} ? 'extra-item d-none' : '')">
-								      <td></td>
-								      <td></td>
-									  <td></td>
-								      <td th:text="${item.locCode}"></td>
-								      <td th:text="${item.qty}"></td>
-								      <td th:text="${item.serialNo}"></td>
-								      <td th:text="${#temporals.format(item.dateIn, 'dd/MM/yyyy')}"></td>
-								      <td></td>
-								    </tr>
+										<tr th:each="item, itemStat : ${group.items}" th:if="${itemStat.index > 0}"
+											th:id="'detail-row-' + ${groupStat.index} + '-' + ${itemStat.index}"
+											th:class="'d-none detail-row detail-group-' + ${groupStat.index} + ' ' + (${itemStat.index ge 6} ? 'extra-item d-none' : '')">
+											<td></td>
+											<td></td>
+											<td></td>
+											<td th:text="${item.locCode}"></td>
+											<td th:text="${item.qty}"></td>
+											<td th:text="${item.serialNo}"></td>
+											<td th:text="${#temporals.format(item.dateIn, 'dd/MM/yyyy')}"></td>
+											<td></td>
+										</tr>
 
-								    <!-- Dòng link "Hiển thị thêm..." -->
-								    <tr th:if="${group.items.size() > 6}"
-								        th:id="'show-more-row-' + ${groupStat.index}"
-								        th:class="'d-none show-more-row detail-group-' + ${groupStat.index}">
-								      <td colspan="8" class="text-center">
-								        <a href="javascript:void(0);" class="show-more-link" th:attr="data-index=${groupStat.index}">
-								          🔽 Hiển thị thêm...
-								        </a>
-								      </td>
-								    </tr>
-								  </th:block>
-								  
-								  
-								  
+										<tr th:if="${group.items.size() > 6}"
+											th:id="'show-more-row-' + ${groupStat.index}"
+											th:class="'d-none show-more-row detail-group-' + ${groupStat.index}">
+											<td colspan="8" class="text-center">
+												<a href="javascript:void(0);" class="show-more-link"
+													th:attr="data-index=${groupStat.index}">
+													🔽 Hiển thị thêm...
+												</a>
+											</td>
+										</tr>
+									</th:block>
 								</tbody>
 							</table>
 						</div>
-
 					</div>
 				</div>
-				<!-- End hướng dẫn nhặt hàng -->
 			</div>
-			<!-- Tab 2: Scan & Pick Items -->
+
+			<!-- Tab 3: Scan & Pick Items -->
 			<div class="tab-pane fade" id="scan" role="tabpanel" aria-labelledby="scan-tab">
-				<div class="mt-3" th:replace="~{fragments/orderpicking/orderpicking_list :: orderpicking_list}"></div>
+				<div th:if="${order != null and order.status == 2}">
+					<div class="mt-3" th:replace="~{fragments/orderpicking/orderpicking_list :: orderpicking_list}">
+					</div>
+				</div>
 			</div>
-		</div>
+
+		</div> <!-- end tab-content -->
+
 	</main>
 
 	<!-- Scripts -->
@@ -146,6 +166,20 @@
 	<script src="/js/picking_instruction.js?v=2"></script>
 	<script src="/js/scan-serial.js?v=2"></script>
 	<script src="/js/endpicking.js?v=2"></script>
+
+	<script>
+		$(document).ready(function () {
+			var urlParams = new URLSearchParams(window.location.search);
+			var orderId = urlParams.get('id');
+			if (orderId) {
+				activateTab('instruction');
+			}
+
+			function activateTab(tabId) {
+				$('#pickingTabs a[href="#' + tabId + '"]').tab('show');
+			}
+		});
+	</script>
 
 </body>
 

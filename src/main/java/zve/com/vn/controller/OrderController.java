@@ -84,9 +84,12 @@ public class OrderController {
 	/* ------------------------------------------------- */
 	@GetMapping("/order/picking")
 	public String orderPicking(@RequestParam(value = "id", required = false) Long orderId, Model model) {
-	   
+		
+		List<Order> orderLists = service.findByStatus(2);
+		model.addAttribute("orderLists", orderLists);
 		  if (orderId == null) {
 		        model.addAttribute("message", "Chưa chọn order để nhặt hàng");
+		        
 		        return "orderpicking";
 		    }
 		
@@ -118,9 +121,9 @@ public class OrderController {
 	    model.addAttribute("order", order);
 	    model.addAttribute("pickingItems", pickingItems);
 	    model.addAttribute("pickingSuggestions", pickingSuggestions);
+	    //model.addAttribute("orderLists", orderLists);
 	    return "orderpicking";
 	}
-
 	/* ------------------------------------------------- */
 	@PostMapping("/picking/scan-serial")
 	@ResponseBody

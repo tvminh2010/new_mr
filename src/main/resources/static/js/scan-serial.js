@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const input = document.querySelector('input[name="scannedSerial"]');
   const statusDiv = document.getElementById('status-message');
   const saveAllBtn = document.getElementById('saveAllBtn');
+  const endPickingOrder = $('#endPickingOrder')[0];
 
   if (!input) return;
 
@@ -107,6 +108,8 @@ document.addEventListener('DOMContentLoaded', function () {
           console.error(error);
           showStatus('Lỗi khi lưu serial!', 'danger');
         });
+		
+		endPickingOrder.disabled = false;
     });
   }
 });
