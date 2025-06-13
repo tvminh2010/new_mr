@@ -34,7 +34,6 @@ public class OrderItemSerialNo {
 	
 	String itemcode;
 	String serialNo;
-	BigDecimal stockQty;
 	BigDecimal pickingQty;
 	BigDecimal receivedQty;
 	

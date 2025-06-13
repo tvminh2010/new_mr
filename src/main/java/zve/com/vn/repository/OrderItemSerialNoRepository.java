@@ -10,4 +10,5 @@ import zve.com.vn.entity.OrderItemSerialNo;
 @Repository
 public interface OrderItemSerialNoRepository extends JpaRepository<OrderItemSerialNo, Long> {
 	Optional<OrderItemSerialNo> findBySerialNo(String serialNo);
+	 boolean existsBySerialNo(String serialNo);
 }

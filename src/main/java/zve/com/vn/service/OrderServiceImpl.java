@@ -58,4 +58,9 @@ public class OrderServiceImpl implements OrderService {
 		return repository.findById(id);
 	}
 	/* ---------------------------------------------------- */
+	@Override
+	public Order save(Order order) {
+		return repository.save(order);
+	}
+	/* ---------------------------------------------------- */
 }

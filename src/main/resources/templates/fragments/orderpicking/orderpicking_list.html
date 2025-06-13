@@ -31,15 +31,19 @@
 					</tbody>
 					
 				</table>
+				
 				<div class="input-group mb-3">
 					<input type="text" class="form-control" 
 						name="scannedSerial" 
 						placeholder="Quét số Serial" 
 						aria-describedby="saveButton">
 					<div class="input-group-append">
-						<button class="btn btn-outline-secondary" type="button" id="saveAllBtn">Save</button>
+						<button class="btn btn-outline-secondary mr-3" type="button" id="saveAllBtn">Lưu lại</button>
 					</div>
+					<button class="btn btn-outline-primary" type="button" id="endPickingOrder">Kết thúc</button>
 				</div>
+				<input type="hidden" id="orderId" th:value="${order.id}" />
+
 			</form>
 
 			<div id="status-message" class="text-center mt-2" style="display: none;"></div>

@@ -20,8 +20,8 @@ public class PickingSuggestionService {
         return repository.findSuggestionsByProductNos(productNos);
     }
     /* ---------------------------------------------------------- */
-    public PickingSerialNo getStockItemBySerialNo(String serialNo) {
-    	return repository.getStockItemBySerialNo(serialNo);
+    public PickingSerialNo getItemBySerialNo(String serialNo) {
+    	return repository.getItemBySerialNo(serialNo);
     }
     /* ---------------------------------------------------------- */
 }

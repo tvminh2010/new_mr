@@ -1,14 +1,22 @@
 document.addEventListener('DOMContentLoaded', function () {
   const input = document.querySelector('input[name="scannedSerial"]');
   const statusDiv = document.getElementById('status-message');
-  const saveBtn = document.getElementById('saveAllBtn');
+  const saveAllBtn = document.getElementById('saveAllBtn');
 
   if (!input) return;
 
-  const scannedSerials = new Set(); // để kiểm tra serial trùng
-  const scannedSerialDetails = [];  // để lưu chi tiết gửi về controller
+  const scannedSerials = new Set();
+  const scannedSerialDetails = [];
 
-  /* ---------------------------------------------------------------- */
+  function showStatus(message, type = 'success', duration = 0) {
+    statusDiv.textContent = message;
+    statusDiv.className = (type === 'success' ? 'text-success' : 'text-danger') + ' mt-2';
+    statusDiv.style.display = 'block';
+    if (duration > 0) {
+      setTimeout(() => statusDiv.style.display = 'none', duration);
+    }
+  }
+
   input.addEventListener('keypress', function (e) {
     if (e.key !== 'Enter') return;
     e.preventDefault();
@@ -17,9 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!serial) return;
 
     if (scannedSerials.has(serial)) {
-      statusDiv.style.display = 'block';
-      statusDiv.textContent = `Số Serial: "${serial}" đã quét rồi.`;
-      statusDiv.className = 'text-danger';
+      showStatus(`Số Serial: "${serial}" đã quét rồi.`, 'danger');
       input.value = '';
       setTimeout(() => input.focus(), 100);
       return;
@@ -36,25 +42,23 @@ document.addEventListener('DOMContentLoaded', function () {
     })
       .then(res => res.json())
       .then(data => {
-        statusDiv.style.display = 'block';
-        statusDiv.textContent = data.message || 'Đã xử lý';
-        statusDiv.className = data.success ? 'text-success' : 'text-danger';
-
+        showStatus(data.message || 'Đã được quét', data.success ? 'success' : 'danger');
         input.value = '';
         setTimeout(() => input.focus(), 100);
 
         if (data.success && data.pickingSerialNo && updatePickingQty(data.pickingSerialNo)) {
           scannedSerials.add(serial);
-          scannedSerialDetails.push(data.pickingSerialNo); // Lưu lại để gửi lên backend
+          scannedSerialDetails.push(data.pickingSerialNo);
         }
       })
-      .catch(console.error);
+      .catch(error => {
+        console.error(error);
+        showStatus('Lỗi hệ thống khi quét serial!', 'danger');
+      });
   });
 
-  /* ---------------------------------------------------------------- */
   function updatePickingQty(pickingSerialNo) {
-    const table = document.getElementById('orderTable');
-    const rows = table.querySelectorAll('tbody tr');
+    const rows = document.querySelectorAll('#orderTable tbody tr');
     let updated = false;
 
     rows.forEach((row) => {
@@ -69,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
           input.value = currentQty + addedQty;
 
           row.style.backgroundColor = '#d4edda';
-          setTimeout(() => row.style.backgroundColor = '', 1000);
+          setTimeout(() => row.style.backgroundColor = '', 10000);
 
           updated = true;
         }
@@ -78,12 +82,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     return updated;
   }
-  /* ---------------------------------------------------------------- */
 
-  if (saveBtn) {
-    saveBtn.addEventListener('click', function () {
+  if (saveAllBtn) {
+    saveAllBtn.addEventListener('click', function () {
       if (scannedSerialDetails.length === 0) {
-        alert('Chưa có Serial nào để lưu!');
+        showStatus('Chưa quét số Serial!', 'danger');
         return;
       }
 
@@ -94,11 +97,16 @@ document.addEventListener('DOMContentLoaded', function () {
       })
         .then(res => res.json())
         .then(data => {
-          alert(data.message || 'Đã lưu serial thành công');
-          scannedSerials.clear(); // xóa để có thể quét lại nếu cần
-          scannedSerialDetails.length = 0;
+          showStatus(data.message || 'Đã lưu serial thành công', data.success ? 'success' : 'danger');
+          if (data.success) {
+            scannedSerials.clear();
+            scannedSerialDetails.length = 0;
+          }
         })
-        .catch(console.error);
+        .catch(error => {
+          console.error(error);
+          showStatus('Lỗi khi lưu serial!', 'danger');
+        });
     });
   }
 });

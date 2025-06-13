@@ -12,4 +12,5 @@ public interface OrderService {
 	List<Order> fileAllOrder();
 	public String generateOrderName();
 	public int updateOrderByStatus(Long id, Integer status);
+	public Order save(Order order);
 }

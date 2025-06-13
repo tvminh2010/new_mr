@@ -80,19 +80,19 @@ public class PickingSuggestionRepository {
         return result;
     }
     /* --------------------------------------------------------------- */
-    public PickingSerialNo getStockItemBySerialNo(String serialNo) {
+    public PickingSerialNo getItemBySerialNo(String serialNo) {
         String sql = "SELECT pi.qty, pi.product_no, pi.serial_no " +
                      "FROM public.product_instance pi WHERE pi.serial_no = ? AND pi.qty > 0";
         try {
             return jdbc.queryForObject(sql, (rs, rowNum) -> {
                 PickingSerialNo item = new PickingSerialNo();
-                item.setItemCode(rs.getString("product_no"));         // map vào itemCode
+                item.setItemCode(rs.getString("product_no"));        
                 item.setSerialNo(rs.getString("serial_no"));
-                item.setPickingqty(rs.getBigDecimal("qty"));          // map vào pickingqty
+                item.setPickingqty(rs.getBigDecimal("qty"));          
                 return item;
             }, serialNo);
         } catch (EmptyResultDataAccessException e) {
-            return null; // không tìm thấy serial
+            return null; 
         }
     }
     /* --------------------------------------------------------------- */

@@ -6,12 +6,14 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -82,15 +84,19 @@ public class OrderController {
 	/* ------------------------------------------------- */
 	@GetMapping("/order/picking")
 	public String orderPicking(@RequestParam(value = "id", required = false) Long orderId, Model model) {
-	    Order order = service.findById(orderId).orElse(null);
+	   
+		  if (orderId == null) {
+		        model.addAttribute("message", "Chưa chọn order để nhặt hàng");
+		        return "orderpicking";
+		    }
+		
+		Order order = service.findById(orderId).orElse(null);
 	    if (order == null) {
 	        model.addAttribute("message", "Không tìm thấy đơn hàng");
 	        return "orderpicking";
 	    }
 
 	    List<OrderItem> orderItems = order.getOrderItems();
-	    
-	    // Lấy danh sách mã SP
 	    List<String> productNos = orderItems.stream()
 	        .map(OrderItem::getItemcode)
 	        .distinct()
@@ -102,11 +108,10 @@ public class OrderController {
 	    List<PickingItemDto> pickingItems = orderItems.stream()
 	    	.sorted(Comparator.comparing(OrderItem::getItemcode))
 	        .map(detail -> new PickingItemDto(
-	            detail.getItemcode(),   		//Item Code     
-	            detail.getItemname(),  			//Item Name                               
-	            detail.getQtyrequest(),  		//Balance    
+	            detail.getItemcode(),   		   
+	            detail.getItemname(),  			                             
+	            detail.getQtyrequest(), 
 	            detail.getTotalPickingQtyByItemCode(detail.getItemcode())
-	            //BigDecimal.ZERO     			//PickingQty         
 	        ))
 	        .toList();
 
@@ -124,22 +129,29 @@ public class OrderController {
 	    List<String> itemCodes = (List<String>) request.get("itemCodes");
 
 	    Map<String, Object> response = new HashMap<>();
-	    PickingSerialNo pickingSerialNo = pickingSuggestionService.getStockItemBySerialNo(serial);
-
+	    
+	    if (orderItemSerialNoRepository.existsBySerialNo(serial)) {
+	        response.put("success", false);
+	        response.put("message", "⚠️ Số Serial '" + serial + "' đã được quét vào hệ thống!");
+	        return response;
+	    }
+	    
+	    
+	    PickingSerialNo pickingSerialNo = pickingSuggestionService.getItemBySerialNo(serial);
 	    if (pickingSerialNo == null) {
 	        response.put("success", false);
-	        response.put("message", "❌ Không tồn tại mã hàng với số Serial: '" + serial + "' trong hệ thống.");
+	        response.put("message", "❌ Không tìm thấy số Serial: '" + serial + "' trong wms.");
 	        return response;
 	    }
 
-	    String itemCode = pickingSerialNo.getItemCode();
+	    String itemCode = pickingSerialNo.getItemCode(); 
 	    if (itemCodes == null || itemCodes.stream().noneMatch(code -> code.equalsIgnoreCase(itemCode))) {
 	        response.put("success", false);
 	        response.put("message", "⚠️ SerialNo " + serial + " có mã itemCode `" + itemCode + "` không khớp với danh sách cần nhặt.");
 	        return response;
 	    }
 
-	    String message = "✅ SerialNo " + serial + ", với Số lượng: " + pickingSerialNo.getPickingqty() + " đã được xử lý.";
+	    String message = "✅ SerialNo " + serial + ", với Số lượng: " + pickingSerialNo.getPickingqty() + " đã được quét.";
 	    response.put("success", true);
 	    response.put("message", message);
 	    response.put("pickingSerialNo", pickingSerialNo);
@@ -154,11 +166,11 @@ public class OrderController {
 	        OrderItemSerialNo existingEntity = orderItemSerialNoRepository.findBySerialNo(dto.getSerialNo()).orElse(null);
 
 	        if (existingEntity == null) {
-	            OrderItem orderItem = orderItemRepository.findByItemcode(dto.getItemCode()).orElse(null);
-	            if (orderItem == null) {
+	        	List<OrderItem> orderItemList = orderItemRepository.findByItemcode(dto.getItemCode());
+	        	if (orderItemList.isEmpty()) {
 	                continue;
 	            }
-
+	        	OrderItem orderItem = orderItemList.get(0);
 	            existingEntity = OrderItemSerialNo.builder()
 	                    .itemcode(dto.getItemCode())
 	                    .serialNo(dto.getSerialNo())
@@ -180,7 +192,21 @@ public class OrderController {
 	        "message", "Đã lưu " + entities.size() + " serial vào hệ thống."
 	    );
 	}
-
-
+	/* ------------------------------------------------- */
+	@PostMapping("/orders/{id}/end-picking")
+	@ResponseBody
+	public ResponseEntity<String> endPicking(@PathVariable Long id) {
+		Optional<Order> orderOpt = service.findById(id);
+		if (orderOpt.isPresent()) {
+			Order order = orderOpt.get();
+			if (order.getStatus() != 2) {
+				return ResponseEntity.badRequest().body("Order không ở trạng thái PICKING.");
+			}
+			order.setStatus(3);
+			service.save(order);
+			return ResponseEntity.ok("Hoàn tất kết thúc nhặt hàng, đã ở trạng thái đang giao!");
+		}
+		return ResponseEntity.notFound().build();
+	}
 	/* ------------------------------------------------- */
 }

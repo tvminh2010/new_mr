@@ -1,12 +1,12 @@
 <!doctype html>
 <html lang="vi">
-
 <head th:replace="~{fragments/header :: header}"></head>
-
 <body>
 	<nav th:replace="~{fragments/topmenu :: topmenu}"></nav>
-
-	<main role="main" class="container-fluid" style="margin-top: 56px;">
+	<main th:if="${order == null}" role="main" class="container-fluid" style="margin-top: 60px;">
+		<h4>Danh sách order chờ nhặt hàng!</h4>
+	</main>
+	<main th:if="${order != null}" role="main" class="container-fluid" style="margin-top: 56px;">
 		<!-- Thông tin tổng quan -->
 		<div class="row mb-2" style="margin-top: 80px;">
 			<div class="col-6 col-md-3 mb-2">
@@ -34,7 +34,6 @@
 				</strong>
 				<hr />
 			</div>
-
 		</div>
 
 		<!-- Tabs -->
@@ -144,8 +143,9 @@
 	<script src="/bootstrap-4.6.2/js/jquery-3.5.1.min.js"></script>
 	<script src="/bootstrap-4.6.2/js/bootstrap.bundle.min.js"></script>
 	<script src="/dataTables/jquery.dataTables.min.js"></script>
-	<script src="/js/orderpicking.js?v=2"></script>
+	<script src="/js/picking_instruction.js?v=2"></script>
 	<script src="/js/scan-serial.js?v=2"></script>
+	<script src="/js/endpicking.js?v=2"></script>
 
 </body>
 
