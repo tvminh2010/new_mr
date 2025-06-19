@@ -8,8 +8,8 @@
 							<th scope="col">Mã NVL</th>
 							<th scope="col">Tên NVL</th>
 							<th scope="col">SL Yêu cầu</th>
-							<!-- <th scope="col">SerialNo</th> -->
 							<th scope="col">SL nhặt</th>
+							<th scope="col">Trạng thái</th>
 						</tr>
 					</thead>
 
@@ -18,7 +18,6 @@
 							<td th:text="${item.itemCode}"></td>
 							<td class="text-left" th:text="${item.itemName}"></td>
 							<td class="text-left" th:text="${item.requestqty?.intValue()}"></td>
-							<!-- <td>-</td> -->
 							<td>
 								<input type="number" 
 									name="pickingQty[[${iterStat.index}]]" 
@@ -26,6 +25,14 @@
 									class="form-control form-control-sm text-right" 
 									th:value="${item.pickingqty}" 
 									readonly />
+							</td>
+							<td>
+							  <span th:if="${item.pickingqty != null and item.requestqty != null and item.pickingqty.intValue() >= item.requestqty.intValue()}">
+							    <i class="fas fa-check-circle text-success" title="Đã nhặt đủ hoặc dư"></i>
+							  </span>
+							  <span th:if="${item.pickingqty == null or item.pickingqty.intValue() < item.requestqty.intValue()}">
+							    <i class="fas fa-hourglass-half text-warning" title="Chưa nhặt đủ"></i>
+							  </span>
 							</td>
 						</tr>
 					</tbody>
