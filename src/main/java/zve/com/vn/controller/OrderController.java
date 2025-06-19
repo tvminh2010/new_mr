@@ -19,9 +19,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import zve.com.vn.dto.order.request.PickingSerialNo;
 import zve.com.vn.dto.order.response.PickingItemDto;
-import zve.com.vn.dto.order.response.PickingSerialNo;
 import zve.com.vn.dto.order.response.PickingSuggestionGroupDto;
+import zve.com.vn.dto.order.response.ReceivingItemDto;
+import zve.com.vn.dto.order.response.ReceivingSerialDto;
 import zve.com.vn.entity.Order;
 import zve.com.vn.entity.OrderItem;
 import zve.com.vn.entity.OrderItemSerialNo;
@@ -71,7 +73,7 @@ public class OrderController {
 	        if (updated > 0) {
 	            Map<String, Object> result = new HashMap<>();
 	            result.put("id", id);
-	            result.put("status", 2); // Cập nhật trạng thái mới
+	            result.put("status", 2); 
 	            return ResponseEntity.ok(result);
 	        } else {
 	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Order not found"));
@@ -161,6 +163,42 @@ public class OrderController {
 	    return response;
 	}
 	/* ------------------------------------------------- */
+	@PostMapping("/receiving/scan-serial")
+	@ResponseBody
+	public Map<String, Object> receivingScanSerial(@RequestBody Map<String, Object> request) {
+	    String serial = (String) request.get("serial");
+	    Map<String, Object> response = new HashMap<>();
+
+	    if (serial == null || serial.trim().isEmpty()) {
+	        response.put("success", false);
+	        response.put("message", "❌ Số Serial không được để trống!");
+	        return response;
+	    }
+	    OrderItemSerialNo orderItemSerialNo = orderItemSerialNoRepository.findBySerialNo(serial).orElse(null);
+	    if (orderItemSerialNo != null) {
+	        if (orderItemSerialNo.getReceivedQty() != null && orderItemSerialNo.getReceivedQty().compareTo(BigDecimal.ZERO) > 0) {
+	            response.put("success", false);
+	            response.put("message", "⚠️ Số Serial '" + serial + "', đã được nhập, hãy kiểm tra lại!");
+	        } else {
+	            ReceivingSerialDto receivingSerialDto = ReceivingSerialDto
+	                    .builder()
+	                    .itemcode(orderItemSerialNo.getItemcode())
+	                    .pickingQty(orderItemSerialNo.getPickingQty())
+	                    .receivedQty(orderItemSerialNo.getPickingQty()) 
+	                    .serialNo(orderItemSerialNo.getSerialNo())
+	                    .build();
+
+	            response.put("success", true);
+	            response.put("message", "✅ Quét thành công Số Serial '" + serial + "' trong hệ thống!");
+	            response.put("receivingSerialNo", receivingSerialDto);
+	        }
+	    } else {
+	        response.put("success", false);
+	        response.put("message", "❌ Không tìm thấy số Serial '" + serial + "' trong hệ thống!");
+	    }
+	    return response;
+	}
+	/* ------------------------------------------------- */
 	@PostMapping("/picking/save-serials")
 	@ResponseBody
 	public Map<String, Object> saveScannedSerials(@RequestBody List<PickingSerialNo> scannedSerials) {
@@ -196,6 +234,31 @@ public class OrderController {
 	    );
 	}
 	/* ------------------------------------------------- */
+	@PostMapping("/receiving/save-serials")
+	@ResponseBody
+	public ResponseEntity<?> saveReceivingSerials(@RequestBody List<ReceivingSerialDto> serialDtos) {
+	    int updated = 0;
+	    int notFound = 0;
+
+	    for (ReceivingSerialDto dto : serialDtos) {
+	        Optional<OrderItemSerialNo> optionalEntity = orderItemSerialNoRepository.findBySerialNo(dto.getSerialNo());
+
+	        if (optionalEntity.isPresent()) {
+	            OrderItemSerialNo entity = optionalEntity.get();
+	            entity.setReceivedQty(dto.getReceivedQty()); 
+	            orderItemSerialNoRepository.save(entity);
+	            updated++;
+	        } else {
+	            notFound++;
+	        }
+	    }
+
+	    return ResponseEntity.ok(Map.of(
+	        "success", true,
+	        "message", "✅ Đã nhận thành công " + updated + " số serial. Không tìm thấy: " + notFound
+	    ));
+	}
+	/* ------------------------------------------------- */
 	@PostMapping("/orders/{id}/end-picking")
 	@ResponseBody
 	public ResponseEntity<String> endPicking(@PathVariable Long id) {
@@ -225,19 +288,57 @@ public class OrderController {
 	    }
 	    Order order = orderOpt.get();
 	    List<OrderItem> orderItems = order.getOrderItems();
-	    List<PickingItemDto> pickingItems = orderItems.stream()
-	        .sorted(Comparator.comparing(OrderItem::getItemcode))
-	        .map(detail -> new PickingItemDto(
-	            detail.getItemcode(),
-	            detail.getItemname(),
-	            detail.getQtyrequest(),
-	            detail.getTotalPickingQtyByItemCode(detail.getItemcode())
-	        ))
-	        .toList();
+	      
+	    List<ReceivingItemDto> receivingItems = orderItems.stream()
+		        .sorted(Comparator.comparing(OrderItem::getItemcode))
+		        .map(detail -> new ReceivingItemDto(
+		            detail.getItemcode(),
+		            detail.getItemname(),
+		            detail.getQtyrequest(),
+		            detail.getTotalPickingQtyByItemCode(detail.getItemcode()),
+		            detail.getTotalReceivingQtyByItemCode(detail.getItemcode())
+		        ))
+		        .toList();
+		    
 	    model.addAttribute("order", order);
-	    model.addAttribute("pickingItems", pickingItems);
+	    model.addAttribute("receivingItems", receivingItems);
 	    
 	    return "orderreceiving";
 	}
 	/* ------------------------------------------------- */
+	/*
+	@PostMapping("/receiving/complete")
+	@ResponseBody
+	public ResponseEntity<String> receivingOrderComplete(@PathVariable Long id) {
+		Optional<Order> orderOpt = service.findById(id);
+		if (orderOpt.isPresent()) {
+			Order order = orderOpt.get();
+			if (order.getStatus() != 3) {
+				return ResponseEntity.badRequest().body("Order không ở trạng thái RECEIVING.");
+			}
+			order.setStatus(4);
+			service.save(order);
+			return ResponseEntity.ok("Hoàn tất nhận hàng, đã ở trạng thái nhận hàng thành công!");
+		}
+		return ResponseEntity.notFound().build();
+	} */
+	/* ------------------------------------------------- */
+	@PostMapping("/receiving/complete")
+	@ResponseBody
+	public ResponseEntity<String> receivingOrderComplete(@RequestBody Map<String, Object> request) {
+	    Long id = Long.valueOf(request.get("orderId").toString());
+
+	    Optional<Order> orderOpt = service.findById(id);
+	    if (orderOpt.isPresent()) {
+	        Order order = orderOpt.get();
+	        if (order.getStatus() != 3) {
+	            return ResponseEntity.badRequest().body("❌ Order không ở trạng thái 'Chờ nhận hàng'.");
+	        }
+	        order.setStatus(4);
+	        service.save(order);
+	        return ResponseEntity.ok("✔️ Hoàn tất nhận hàng thành công!");
+	    }
+	    return ResponseEntity.status(404).body("❌ Không tìm thấy Order.");
+	}
+
 }

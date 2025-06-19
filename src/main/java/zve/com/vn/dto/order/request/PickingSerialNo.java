@@ -1,4 +1,4 @@
-package zve.com.vn.dto.order.response;
+package zve.com.vn.dto.order.request;
 
 import java.math.BigDecimal;
 

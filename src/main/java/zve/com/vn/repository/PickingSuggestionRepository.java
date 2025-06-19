@@ -11,7 +11,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import zve.com.vn.dto.order.response.PickingSerialNo;
+import zve.com.vn.dto.order.request.PickingSerialNo;
 import zve.com.vn.dto.order.response.PickingSuggestionGroupDto;
 import zve.com.vn.dto.order.response.PickingSuggestionItem;
 

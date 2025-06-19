@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import zve.com.vn.dto.order.response.PickingSerialNo;
+import zve.com.vn.dto.order.request.PickingSerialNo;
 import zve.com.vn.dto.order.response.PickingSuggestionGroupDto;
 import zve.com.vn.repository.PickingSuggestionRepository;
 

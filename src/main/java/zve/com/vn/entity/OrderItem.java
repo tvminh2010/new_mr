@@ -56,6 +56,14 @@ public class OrderItem {
 	            .reduce(BigDecimal.ZERO, BigDecimal::add);  // Tính tổng
 	}
 	/* ------------------------------------------------- */
+	/* ------------------------------------------------- */
+	public BigDecimal getTotalReceivingQtyByItemCode(String itemCode) {
+	    return orderItemSerialNos.stream()
+	            .filter(orderItemSerialNo -> orderItemSerialNo.getItemcode().equals(itemCode))  
+	            .map(OrderItemSerialNo::getReceivedQty) 
+	            .filter(receivedQty -> receivedQty != null)  
+	            .reduce(BigDecimal.ZERO, BigDecimal::add);  
+	}
 
 
 }

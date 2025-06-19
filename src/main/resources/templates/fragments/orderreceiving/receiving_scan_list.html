@@ -15,17 +15,20 @@
 					</thead>
 
 					<tbody class="text-center">
-						<tr th:each="item, iterStat : ${pickingItems}">
+						<tr th:each="item, iterStat : ${receivingItems}">
 							<td th:text="${item.itemCode}"></td>
 							<td class="text-left" th:text="${item.itemName}"></td>
 							<td class="text-left" th:text="${item.requestqty?.intValue()}"></td>
 							<td class="text-left" th:text="${item.pickingqty?.intValue()}"></td>
 							<td>
 								<input type="number" 
-									name="receivingQty[[${iterStat.index}]]" 
-									min="0"
-									class="form-control form-control-sm text-right" 
-									readonly />
+								       name="receivingQty[[${iterStat.index}]]" 
+								       th:attr="data-itemcode=${item.itemCode}" 
+								       th:value="${item.receivingqty != null ? item.receivingqty : 0}"
+								       min="0"
+								       class="form-control form-control-sm text-right"
+								       readonly />
+
 							</td>
 						</tr>
 					</tbody>
@@ -40,7 +43,7 @@
 					<div class="input-group-append">
 						<button class="btn btn-outline-secondary mr-3" type="button" id="saveAllBtn">Lưu lại</button>
 					</div>
-					<button class="btn btn-outline-primary" type="button" id="endPickingOrder">Hoàn tất nhận hàng</button>
+					<!-- <button class="btn btn-outline-primary" type="button" id="endReceivingOrder">Kết thúc nhận hàng</button> -->
 				</div>
 				<input type="hidden" id="orderId" th:value="${order.id}" />
 			</form>
