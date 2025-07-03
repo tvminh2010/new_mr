@@ -1,14 +1,19 @@
 <!doctype html>
 <html lang="en">
-<head th:replace="~{fragments/header :: header}"></head>
+
+<head th:replace="~{fragments/ycnvl/ycnvl_header :: ycnvl_header}"></head>
+
 <body>
+	<nav th:replace="~{fragments/ycnvl/ycnvl_top_nav :: ycnvl_top_nav}"></nav>
 	<!-- ----------------------------------------------------------------------------- -->
 	<main role="main" class="container-fluid">
-		<h4>Cân và intem hàng trả về!</h4>
+		<form th:replace="~{fragments/ycnvl/ycnvl_topform :: ycnvl_topform}"></form>
+		<div th:replace="~{fragments/hoantranvl/hoantranvl_dataform :: hoantranvl_dataform}"></div>
 	</main>
 	<!-- ----------------------------------------------------------------------------- -->
 	<script src="bootstrap-4.6.2/js/jquery-3.5.1.min.js"></script>
 	<script src="bootstrap-4.6.2/js/bootstrap.bundle.min.js"></script>
+	<script src="/js/ycnvl.js"></script>
 </body>
 
 </html>

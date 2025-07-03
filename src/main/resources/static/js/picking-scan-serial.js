@@ -58,6 +58,48 @@ document.addEventListener('DOMContentLoaded', function () {
       });
   });
 
+  /* ---------------------------------------------------------------- */
+  function updatePickingQty(pickingSerialNo) {
+    const rows = document.querySelectorAll('#orderTable tbody tr');
+    let updated = false;
+
+    rows.forEach((row) => {
+      const itemCodeTd = row.children[0];
+      const input = row.querySelector('input[type="number"]');
+
+      if (itemCodeTd && input) {
+        const itemCode = itemCodeTd.textContent.trim();
+        if (itemCode === pickingSerialNo.itemCode) {
+          const currentQty = parseFloat(input.value) || 0;
+          const addedQty = parseFloat(pickingSerialNo.pickingqty) || 0;
+          const newQty = currentQty + addedQty;
+
+          input.value = newQty;
+
+          // ✅ Cập nhật trạng thái biểu tượng
+          const requestQty = parseFloat(row.children[2]?.textContent?.trim()) || 0;
+          const statusCell = row.children[4];
+          statusCell.innerHTML = '';
+          if (newQty >= requestQty) {
+            statusCell.innerHTML = '<i class="fas fa-check-circle text-success" title="Đã nhặt đủ hoặc dư"></i>';
+          } else {
+            statusCell.innerHTML = '<i class="fas fa-hourglass-half text-warning" title="Chưa nhặt đủ"></i>';
+          }
+
+          // ✅ Đổi màu dòng tạm thời
+          row.classList.add('row-highlight');
+          setTimeout(() => row.classList.remove('row-highlight'), 10000);
+
+          updated = true;
+        }
+      }
+    });
+
+    return updated;
+  }
+   
+  /* ---------------------------------------------------------------- */
+  /*
   function updatePickingQty(pickingSerialNo) {
     const rows = document.querySelectorAll('#orderTable tbody tr');
     let updated = false;
@@ -82,7 +124,9 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     return updated;
-  }
+  } */
+  /* ---------------------------------------------------------------- */
+  
 
   if (saveAllBtn) {
     saveAllBtn.addEventListener('click', function () {

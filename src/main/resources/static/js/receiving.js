@@ -1,4 +1,53 @@
+
 /* -------------------- kết thúc nhận hàng ----------------- */
+function endReceiving() {
+  if (!selectedOrderId) {
+    alert("❌ Không tìm thấy Order để kết thúc!");
+    return;
+  }
+
+  if (!confirm("📦 Bạn có chắc chắn muốn kết thúc nhận hàng?\nDữ liệu sẽ được cố định và không thể sửa sau đó!")) {
+    return;
+  }
+
+  const $messageDiv = $('#receiving-complete-message');
+
+  // Gửi yêu cầu kết thúc
+  $.ajax({
+    url: '/receiving/complete',
+    method: 'POST',
+    contentType: 'application/json',
+    data: JSON.stringify({ orderId: selectedOrderId }),
+
+    beforeSend: function () {
+      $messageDiv
+        .text("⏳ Đang gửi yêu cầu kết thúc nhận hàng...")
+        .removeClass()
+        .addClass('text-left mt-2 text-info')
+        .show();
+    },
+
+    success: function (response) {
+      $messageDiv
+        .text("✅ " + response)
+        .removeClass()
+        .addClass('text-left mt-2 text-success');
+
+      // ✅ Reload sau 1.5 giây để cập nhật danh sách order
+      setTimeout(() => location.reload(), 1500);
+    },
+
+    error: function (xhr) {
+      console.error("❌ Error response:", xhr);
+      $messageDiv
+        .text("❌ Lỗi khi kết thúc nhận hàng! Vui lòng thử lại.")
+        .removeClass()
+        .addClass('text-left mt-2 text-danger');
+    }
+  });
+}
+
+/*
 function endReceiving() {
     if (confirm("Bạn có chắc chắn muốn kết thúc nhận hàng? Dữ liệu sẽ được cố định.")) {
       alert("✔️ Đã gửi yêu cầu kết thúc nhận hàng!");
@@ -24,6 +73,7 @@ function endReceiving() {
       });
     }
   }
+  */
 /* ---------------------------------------------------------- */
 
 $(document).ready(function() {

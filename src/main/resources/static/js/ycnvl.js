@@ -134,7 +134,6 @@ $(document).ready(function () {
 	    });
 	});
 	/** End lấy dữ liệu đã nhập và đẩy lên server bằng post */
-	
 });
 
 

@@ -306,23 +306,6 @@ public class OrderController {
 	    return "orderreceiving";
 	}
 	/* ------------------------------------------------- */
-	/*
-	@PostMapping("/receiving/complete")
-	@ResponseBody
-	public ResponseEntity<String> receivingOrderComplete(@PathVariable Long id) {
-		Optional<Order> orderOpt = service.findById(id);
-		if (orderOpt.isPresent()) {
-			Order order = orderOpt.get();
-			if (order.getStatus() != 3) {
-				return ResponseEntity.badRequest().body("Order không ở trạng thái RECEIVING.");
-			}
-			order.setStatus(4);
-			service.save(order);
-			return ResponseEntity.ok("Hoàn tất nhận hàng, đã ở trạng thái nhận hàng thành công!");
-		}
-		return ResponseEntity.notFound().build();
-	} */
-	/* ------------------------------------------------- */
 	@PostMapping("/receiving/complete")
 	@ResponseBody
 	public ResponseEntity<String> receivingOrderComplete(@RequestBody Map<String, Object> request) {

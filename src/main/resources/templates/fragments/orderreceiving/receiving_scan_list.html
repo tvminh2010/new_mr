@@ -20,14 +20,22 @@
 							<td th:text="${item.itemCode}"></td>
 							<td class="text-left" th:text="${item.itemName}"></td>
 							<td class="text-left" th:text="${item.requestqty?.intValue()}"></td>
-							<td class="text-left" th:text="${item.pickingqty?.intValue()}"></td>
+							<td class="text-left" th:text="${item.pickingqty}"></td>
 							<td>
-								<input type="number" name="receivingQty[[${iterStat.index}]]"
-									th:attr="data-itemcode=${item.itemCode}"
-									th:value="${item.receivingqty != null ? item.receivingqty : 0}" min="0"
-									class="form-control form-control-sm text-right" readonly />
-
+								
+									   
+							   <input type="number" name="receivingQty[[${iterStat.index}]]"
+							          th:attr="data-itemcode=${item.itemCode}, data-pickingqty=${item.pickingqty}, 
+									  data-requestqty=${item.requestqty}"
+							          th:value="${item.receivingqty != null ? item.receivingqty : 0}" 
+							          class="form-control form-control-sm text-right receiving-qty"
+							          readonly />
 							</td>
+							
+							<td class="status-cell">
+							  <span class="status-icon"></span>
+							</td>
+							<!-- 
 							<td>
 								<span
 									th:if="${item.pickingqty != null and item.receivingqty != null and item.pickingqty.intValue() == item.receivingqty.intValue()}">
@@ -37,7 +45,8 @@
 									th:if="${item.receivingqty == null or item.pickingqty.intValue() != item.receivingqty.intValue()}">
 									<i class="fas fa-hourglass-half text-warning" title="Chưa nhận đủ"></i>
 								</span>
-							</td>
+							</td> -->
+							
 						</tr>
 					</tbody>
 
