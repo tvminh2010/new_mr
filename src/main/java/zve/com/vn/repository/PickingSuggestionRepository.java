@@ -80,6 +80,40 @@ public class PickingSuggestionRepository {
         return result;
     }
     /* --------------------------------------------------------------- */
+    public List<String> findLocationsByProductNoAndRequestQty(String productNo, BigDecimal requestQty) {
+        if (productNo == null || requestQty == null || requestQty.compareTo(BigDecimal.ZERO) <= 0) {
+            return List.of();
+        }
+        String sql = """
+            SELECT pi.loc_code, pi.qty
+            FROM public.product_instance pi
+            WHERE pi.product_no = ?
+              AND pi.status = '1'
+              AND pi.qty > 0
+            ORDER BY pi.date_in ASC,
+                     CASE 
+                         WHEN pi.loc_code ~ '^[0-9]{2}-([0-9]{2})-[0-9]{2}$' 
+                         THEN substring(pi.loc_code FROM 4 FOR 2)::int 
+                         ELSE NULL 
+                     END
+        """;
+
+        List<Map<String, Object>> rows = jdbc.queryForList(sql, productNo);
+        BigDecimal accumulatedQty = BigDecimal.ZERO;
+        List<String> selectedLocations = new java.util.ArrayList<>();
+
+        for (Map<String, Object> row : rows) {
+            if (accumulatedQty.compareTo(requestQty) >= 0) break;
+
+            BigDecimal qty = (BigDecimal) row.get("qty");
+            String locCode = (String) row.get("loc_code");
+
+            accumulatedQty = accumulatedQty.add(qty);
+            selectedLocations.add(locCode);
+        }
+        return selectedLocations;
+    }
+    /* --------------------------------------------------------------- */
     public PickingSerialNo getItemBySerialNo(String serialNo) {
         String sql = "SELECT pi.qty, pi.product_no, pi.serial_no " +
                      "FROM public.product_instance pi WHERE pi.serial_no = ? AND pi.qty > 0";

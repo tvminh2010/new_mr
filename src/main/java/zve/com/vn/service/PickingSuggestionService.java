@@ -1,5 +1,6 @@
 package zve.com.vn.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -22,6 +23,10 @@ public class PickingSuggestionService {
     /* ---------------------------------------------------------- */
     public PickingSerialNo getItemBySerialNo(String serialNo) {
     	return repository.getItemBySerialNo(serialNo);
+    }
+    /* ---------------------------------------------------------- */
+    public List<String> findLocationsByProductNoAndRequestQty(String productNo, BigDecimal requestQty) {
+    	return repository.findLocationsByProductNoAndRequestQty(productNo, requestQty);
     }
     /* ---------------------------------------------------------- */
 }

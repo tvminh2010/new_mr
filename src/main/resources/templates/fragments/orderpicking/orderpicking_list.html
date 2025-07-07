@@ -5,19 +5,58 @@
 				<table id="orderTable" class="table table-sm table-hover table-bordered text-nowrap table-striped">
 					<thead class="text-center">
 						<tr>
+							<th scope="col">Category</th>
 							<th scope="col">Mã NVL</th>
 							<th scope="col">Tên NVL</th>
+							<th scope="col">Location</th>
 							<th scope="col">SL Yêu cầu</th>
 							<th scope="col">SL nhặt</th>
-							<th scope="col">Trạng thái</th>
+							<th scope="col">Status</th>
 						</tr>
 					</thead>
 
 					<tbody class="text-center">
 						<tr th:each="item, iterStat : ${pickingItems}">
+							<td th:text="${item.itemCategory}"></td>
 							<td th:text="${item.itemCode}"></td>
 							<td class="text-left" th:text="${item.itemName}"></td>
-							<td class="text-left" th:text="${item.requestqty?.intValue()}"></td>
+							
+							
+							
+							
+							<td class="text-left">
+							  <!-- Hiển thị 3 vị trí đầu -->
+							  <span th:each="loc, stat : ${item.suggestedLocations}">
+							    <span th:if="${stat.index < 3}" class="badge badge-custom-light me-1" th:text="${loc}"></span>
+							  </span>
+
+							  <!-- Nếu có nhiều hơn 3 vị trí -->
+							  <span th:if="${item.suggestedLocations.size() > 3}">
+								<a href="#" 
+								   class="btn btn-sm btn-outline-primary show-more-locations" 
+								   th:attr="data-content=${#strings.arrayJoin(item.suggestedLocations.subList(3, item.suggestedLocations.size()), ' &nbsp;•&nbsp; ')}"
+								   data-toggle="popover"
+								   data-html="true"
+								   data-placement="auto"
+								   title="Vị trí còn lại theo hàng"
+								   tabindex="0">
+								   <i class="fas fa-angle-double-right"></i>
+								</a>
+							  </span>
+							</td>
+							
+							<!-- <td class="text-left" th:text="${item.requestqty}"></td> -->
+							
+							<td class="text-left"
+							    th:with="qty=${item.requestqty != null ? item.requestqty.stripTrailingZeros().toPlainString() : ''}"
+							    th:text="${#strings.contains(qty, '.') ? qty.replaceFirst('(\\.\\d*?)0+$', '$1').replaceFirst('\\.$', '') : qty}">
+							</td>
+
+
+
+
+
+							
 							<td>
 								<input type="number" 
 									name="pickingQty[[${iterStat.index}]]" 
@@ -27,13 +66,14 @@
 									readonly />
 							</td>
 							<td>
-							  <span th:if="${item.pickingqty != null and item.requestqty != null and item.pickingqty.intValue() >= item.requestqty.intValue()}">
+							  <span th:if="${item.pickingqty != null and item.requestqty != null and item.pickingqty.compareTo(item.requestqty) >= 0}">
 							    <i class="fas fa-check-circle text-success" title="Đã nhặt đủ hoặc dư"></i>
 							  </span>
-							  <span th:if="${item.pickingqty == null or item.pickingqty.intValue() < item.requestqty.intValue()}">
+							  <span th:if="${item.pickingqty == null or item.pickingqty.compareTo(item.requestqty) < 0}">
 							    <i class="fas fa-hourglass-half text-warning" title="Chưa nhặt đủ"></i>
 							  </span>
 							</td>
+
 						</tr>
 					</tbody>
 					

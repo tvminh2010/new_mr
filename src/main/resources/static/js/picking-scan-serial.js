@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     const itemCodes = Array.from(document.querySelectorAll('#orderTable tbody tr'))
-      .map(row => row.cells[0]?.textContent?.trim())
+      .map(row => row.cells[1]?.textContent?.trim())
       .filter(Boolean);
 
     fetch('/picking/scan-serial', {
@@ -60,73 +60,56 @@ document.addEventListener('DOMContentLoaded', function () {
 
   /* ---------------------------------------------------------------- */
   function updatePickingQty(pickingSerialNo) {
-    const rows = document.querySelectorAll('#orderTable tbody tr');
-    let updated = false;
+      const rows = document.querySelectorAll('#orderTable tbody tr');
+      let updated = false;
 
-    rows.forEach((row) => {
-      const itemCodeTd = row.children[0];
-      const input = row.querySelector('input[type="number"]');
+      rows.forEach((row) => {
+          const itemCodeTd = row.children[1]; // Cột Mã SP
+          const input = row.querySelector('input[type="number"]'); // Cột SL nhặt
 
-      if (itemCodeTd && input) {
-        const itemCode = itemCodeTd.textContent.trim();
-        if (itemCode === pickingSerialNo.itemCode) {
-          const currentQty = parseFloat(input.value) || 0;
-          const addedQty = parseFloat(pickingSerialNo.pickingqty) || 0;
-          const newQty = currentQty + addedQty;
+          if (itemCodeTd && input) {
+              const itemCode = itemCodeTd.textContent.trim();
+              const serialItemCode = pickingSerialNo.itemCode?.trim();
 
-          input.value = newQty;
+              if (itemCode === serialItemCode) {
+                  // Lấy số lượng hiện tại và số lượng thêm
+                  const currentQty = parseFloat(input.value) || 0;
+                  const addedQty = parseFloat(pickingSerialNo.pickingqty) || 0;
+                  const newQty = currentQty + addedQty;
 
-          // ✅ Cập nhật trạng thái biểu tượng
-          const requestQty = parseFloat(row.children[2]?.textContent?.trim()) || 0;
-          const statusCell = row.children[4];
-          statusCell.innerHTML = '';
-          if (newQty >= requestQty) {
-            statusCell.innerHTML = '<i class="fas fa-check-circle text-success" title="Đã nhặt đủ hoặc dư"></i>';
-          } else {
-            statusCell.innerHTML = '<i class="fas fa-hourglass-half text-warning" title="Chưa nhặt đủ"></i>';
+                  // Đảm bảo định dạng lại số lượng nhặt
+                  input.value = newQty;
+
+                  // Lấy SL yêu cầu từ cột thứ 4 (index = 3)
+                  const requestQtyText = row.children[4]?.textContent?.trim();
+                  const requestQty = parseFloat(requestQtyText) || 0;
+
+                  // Lấy lại SL nhặt thực tế
+                  const pickedQty = parseFloat(input.value) || 0;
+
+                  // Cập nhật trạng thái
+                  const statusCell = row.children[6];
+                  statusCell.innerHTML = '';
+
+                  // Kiểm tra trạng thái
+                  if (pickedQty >= requestQty) {
+                      statusCell.innerHTML = '<i class="fas fa-check-circle text-success" title="Đã nhặt đủ hoặc dư"></i>';
+                  } else {
+                      statusCell.innerHTML = '<i class="fas fa-hourglass-half text-warning" title="Chưa nhặt đủ"></i>';
+                  }
+
+                  // Highlight dòng tạm thời
+                  row.classList.add('row-highlight');
+                  setTimeout(() => row.classList.remove('row-highlight'), 10000);
+
+                  updated = true;
+              }
           }
+      });
 
-          // ✅ Đổi màu dòng tạm thời
-          row.classList.add('row-highlight');
-          setTimeout(() => row.classList.remove('row-highlight'), 10000);
-
-          updated = true;
-        }
-      }
-    });
-
-    return updated;
+      return updated;
   }
-   
   /* ---------------------------------------------------------------- */
-  /*
-  function updatePickingQty(pickingSerialNo) {
-    const rows = document.querySelectorAll('#orderTable tbody tr');
-    let updated = false;
-
-    rows.forEach((row) => {
-      const itemCodeTd = row.children[0];
-      const input = row.querySelector('input[type="number"]');
-
-      if (itemCodeTd && input) {
-        const itemCode = itemCodeTd.textContent.trim();
-        if (itemCode === pickingSerialNo.itemCode) {
-          const currentQty = parseFloat(input.value) || 0;
-          const addedQty = parseFloat(pickingSerialNo.pickingqty) || 0;
-          input.value = currentQty + addedQty;
-
-          row.style.backgroundColor = '#d4edda';
-          setTimeout(() => row.style.backgroundColor = '', 10000);
-
-          updated = true;
-        }
-      }
-    });
-
-    return updated;
-  } */
-  /* ---------------------------------------------------------------- */
-  
 
   if (saveAllBtn) {
     saveAllBtn.addEventListener('click', function () {

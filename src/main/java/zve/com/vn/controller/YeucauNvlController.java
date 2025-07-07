@@ -147,6 +147,7 @@ public class YeucauNvlController {
 	            existing.setQtyrequest(dto.getQtyrequest());
 	        } else {
 	            OrderItem newDetail = OrderItem.builder()
+	            	.itemcategory(dto.getItemCategory())
 	                .itemcode(dto.getItemCode())
 	                .itemname(dto.getItemName())
 	                .qtyrequest(dto.getQtyrequest())

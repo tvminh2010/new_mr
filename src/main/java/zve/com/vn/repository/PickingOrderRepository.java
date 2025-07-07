@@ -32,7 +32,7 @@ public class PickingOrderRepository {
 	/* ---------------------------------------------------------- */
 	public List<PickingItemDto> findAllItems(String productNo) {
 		String sql = """
-					SELECT pi.product_no, pm.product_name, pi.loc_code, pi.serial_no, pi.qty
+					SELECT pi.category_code, pi.product_no, pm.product_name, pi.loc_code, pi.serial_no, pi.qty
 					FROM public.product_instance pi
 					LEFT JOIN public.m_product_master pm
 					ON pi.product_no = pm.product_no
@@ -44,10 +44,12 @@ public class PickingOrderRepository {
 
 		return jdbc.query(sql,
 				(rs, rowNum) -> new PickingItemDto(
+						rs.getString("category_code"), 
 						rs.getString("product_no"), 
 						rs.getString("product_name"), 
 						rs.getBigDecimal("qty"), 
-						BigDecimal.ZERO),
+						BigDecimal.ZERO,
+						null),
 				productNo);
 	}
 	/* ---------------------------------------------------------- */

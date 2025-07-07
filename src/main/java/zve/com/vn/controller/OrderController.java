@@ -113,17 +113,18 @@ public class OrderController {
 	    List<PickingItemDto> pickingItems = orderItems.stream()
 	    	.sorted(Comparator.comparing(OrderItem::getItemcode))
 	        .map(detail -> new PickingItemDto(
+	        	detail.getItemcategory(),	
 	            detail.getItemcode(),   		   
 	            detail.getItemname(),  			                             
 	            detail.getQtyrequest(), 
-	            detail.getTotalPickingQtyByItemCode(detail.getItemcode())
+	            detail.getTotalPickingQtyByItemCode(detail.getItemcode()),
+	            pickingSuggestionService.findLocationsByProductNoAndRequestQty(detail.getItemcode(), detail.getQtyrequest())
 	        ))
 	        .toList();
 
 	    model.addAttribute("order", order);
 	    model.addAttribute("pickingItems", pickingItems);
 	    model.addAttribute("pickingSuggestions", pickingSuggestions);
-	    //model.addAttribute("orderLists", orderLists);
 	    return "orderpicking";
 	}
 	/* ------------------------------------------------- */

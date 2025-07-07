@@ -48,12 +48,16 @@
 					🧾 Danh sách order cần nhặt hàng
 				</a>
 			</li>
+			
+			<!-- 
 			<li class="nav-item">
 				<a class="nav-link" id="instruction-tab" data-toggle="tab" href="#instruction" role="tab"
 					aria-controls="instruction" aria-selected="false">
 					📋 Picking Instructions
 				</a>
 			</li>
+			-->
+			
 			<li class="nav-item">
 				<a class="nav-link" id="scan-tab" data-toggle="tab" href="#scan" role="tab" aria-controls="scan"
 					aria-selected="false">
@@ -83,6 +87,7 @@
 			</div>
 
 			<!-- Tab 2: Picking Instructions -->
+			<!-- 
 			<div class="tab-pane fade" id="instruction" role="tabpanel" aria-labelledby="instruction-tab">
 				<p th:if="${order != null and order.status != 2}">Chọn đúng order cần nhặt hàng!</p>
 				<p th:if="${order == null}">Chưa chọn order để nhặt hàng!</p>
@@ -152,7 +157,7 @@
 					</div>
 				</div>
 			</div>
-
+			-->
 			<!-- Tab 3: Scan & Pick Items -->
 			<div class="tab-pane fade" id="scan" role="tabpanel" aria-labelledby="scan-tab">
 				<div th:if="${order != null and order.status == 2}">
@@ -205,12 +210,24 @@
 			var urlParams = new URLSearchParams(window.location.search);
 			var orderId = urlParams.get('id');
 			if (orderId) {
-				activateTab('instruction');
+				activateTab('scan');
 			}
 
 			function activateTab(tabId) {
 				$('#pickingTabs a[href="#' + tabId + '"]').tab('show');
 			}
+			
+			
+			$('[data-toggle="popover"]').popover();
+			$('body').on('click', function (e) {
+			  $('[data-toggle="popover"]').each(function () {
+			    // Nếu click ngoài popover
+			    if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+			      $(this).popover('hide');
+			    }
+			  });
+			});
+			
 		});
 	</script>
 

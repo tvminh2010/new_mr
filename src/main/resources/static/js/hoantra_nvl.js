@@ -60,7 +60,6 @@ $(document).ready(function () {
 				            <td class="align-middle small text-left">${item.donggoi || ''}</td>
 				            <td class="align-middle small text-left">${item.qtyPlan || '0'}</td>
 				            <td class="align-middle small text-left">${item.qtyReceive || ''}</td>
-				            <td class="align-middle small text-left">${item.instock || '0'}</td>
 				            <td class="align-middle">
 				                <div class="input-group input-group-sm">
 				                    <input type="text" class="form-control form-control-sm" name="soLuong[]" ${readonlyAttr} value="${item.qtyrequest || ''}">

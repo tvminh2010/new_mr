@@ -1,6 +1,8 @@
 package zve.com.vn.dto.order.response;
 
 import java.math.BigDecimal;
+import java.util.List;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,8 +19,10 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PickingItemDto {
+	String itemCategory;
 	String itemCode;
 	String itemName;
 	BigDecimal requestqty;
 	BigDecimal pickingqty;
+	List<String> suggestedLocations;
 }

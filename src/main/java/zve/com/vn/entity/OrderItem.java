@@ -35,6 +35,7 @@ public class OrderItem {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
+	String itemcategory;
 	String itemcode;
 	String itemname;
 	//BigDecimal qtyreceived;
