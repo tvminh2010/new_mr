@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import zve.com.vn.entity.OrderItemSerialNo;
 import zve.com.vn.entity.WorkOrder;

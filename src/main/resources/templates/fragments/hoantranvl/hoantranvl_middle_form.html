@@ -1,0 +1,98 @@
+<th:block th:fragment="hoantranvl_middle_form">
+  <form>
+    <div class="row mb-4 border-top">
+      <!-- Cột quét serial -->
+      <div class="col-md-6 pr-4">
+        <!-- Các input trước đó giữ nguyên -->
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="itemCategory">Item Category</label>
+            <input type="text" class="form-control" id="itemCategory" name="itemCategory" readonly>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="itemCode">Item Code</label>
+            <input type="text" class="form-control" id="itemCode" name="itemCode" readonly>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="itemName">Item Name</label>
+            <input type="text" class="form-control" id="itemName" name="itemName" readonly>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="lotNo">Lot No</label>
+            <input type="text" class="form-control" id="lotNo" name="lotNo" readonly>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="vendor">Vendor</label>
+            <input type="text" class="form-control" id="vendor" name="vendor" readonly>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="unit">Unit</label>
+            <input type="text" class="form-control" id="unit" name="unit" readonly>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="coreType">Core Type</label>
+            <input type="text" class="form-control" id="coreType" name="coreType" readonly>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="receivingDate">Receiving Date</label>
+            <input type="text" class="form-control" id="receivingDate" name="receivingDate" readonly>
+          </div>
+        </div>
+
+        <!-- Hàng Serial No + Button chung -->
+        <div class="form-row">
+          <div class="form-group col-md-10">
+            <label for="serialNo">Serial No</label>
+            <input type="text" class="form-control" id="serialNo" name="serialNo" placeholder="Quét mã vạch nvl" autofocus>
+          </div>
+          <div class="form-group col-md-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-secondary w-100">Add and Print</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cột cân -->
+      <div class="col-md-6 pl-4">
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="weight">Weight<small> (kg)</small></label>
+            <input type="text" class="form-control" id="weight" name="weight" readonly>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="coreWeight">Trọng lượng lõi<small> (kg)</small></label>
+            <input type="text" class="form-control" id="coreWeight" name="coreWeight" readonly>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="netWeight">Net Weight<small> (kg)</small></label>
+            <input type="text" class="form-control" id="netWeight" name="netWeight" readonly>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="rate">Tỷ lệ</label>
+            <input type="text" class="form-control" id="rate" name="rate">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="quantity">Quantity</label>
+            <input type="text" class="form-control" id="quantity" name="quantity" readonly>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="copies">Copies</label>
+            <input type="text" class="form-control" id="copies" name="copies" readonly>
+          </div>
+        </div>
+		
+		<div id="status-message" class="text-center mt-5" style="display: none;"></div>
+		
+      </div>
+    </div>
+  </form>
+</th:block>

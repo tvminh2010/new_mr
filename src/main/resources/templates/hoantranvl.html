@@ -8,6 +8,9 @@
 	<!-- ----------------------------------------------------------------------------- -->
 	<main role="main" class="container-fluid">
 		<form th:replace="~{fragments/ycnvl/ycnvl_topform :: ycnvl_topform}"></form>
+		<div id="middleFormSection" style="display:none;">
+			<form th:replace="~{fragments/hoantranvl/hoantranvl_middle_form :: hoantranvl_middle_form}"></form>
+		</div>
 		<div th:replace="~{fragments/hoantranvl/hoantranvl_dataform :: hoantranvl_dataform}"></div>
 	</main>
 	<!-- ----------------------------------------------------------------------------- -->
