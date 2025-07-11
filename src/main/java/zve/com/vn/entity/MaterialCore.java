@@ -2,6 +2,7 @@ package zve.com.vn.entity;
 
 import java.math.BigDecimal;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -29,9 +30,16 @@ public class MaterialCore {
 	@GeneratedValue(strategy = GenerationType.AUTO) 
 	Long id;
 	String itemCode;
+	
+	@Column(columnDefinition = "NVARCHAR(50)")
+	String itemName;
 	String unit;
 	String coreType;
+	@Column(precision = 18, scale = 6)
 	BigDecimal coreWeight;
+	@Column(precision = 18, scale = 10) 
 	BigDecimal rate;
+	
+	@Column(columnDefinition = "NVARCHAR(50)")
 	String vendor;
 }

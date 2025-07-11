@@ -162,28 +162,48 @@ $(document).ready(function() {
 
 	function submitSerialNo() {
 		let serial = $('#serialNo').val().trim();
+		let workOrderCode = $('#workorderSelect').val(); // 🔥 lấy WO hiện tại
 		if (!serial) return;
 
 		$.ajax({
 			url: '/hoantra-nvl/serial-scan',
 			method: 'POST',
 			contentType: 'application/json',
-			data: JSON.stringify({ serialNo: serial }),
+			data: JSON.stringify({ serialNo: serial, workOrderCode: workOrderCode }),
 			success: function(res) {
-				$('#itemCategory').val(res.category || '');
-				$('#itemCode').val(res.itemCode || '');
-				$('#itemName').val(res.itemName || '');
-				$('#lotNo').val(res.lotNo || '');
-				$('#vendor').val(res.vendor || '');
-				$('#unit').val(res.unit || '');
-				$('#coreType').val(res.coreType || '');
-				$('#receivingDate').val(res.receivingDate || '');
-				//$('#serialNo').val(res.serialNo || '');
-				$('#serialNo').val('').focus();
+			    $('#itemCategory').val(res.category || '');
+			    $('#itemCode').val(res.itemCode || '');
+			    $('#itemName').val(res.itemName || '');
+			    $('#lotNo').val(res.lotNo || '');
+			    $('#vendor').val(res.vendor || '');
+			    $('#unit').val(res.unit || '');
+			    $('#coreType').val(res.coreType || '');
+			    $('#receivingDate').val(res.receivingDate || '');
+			    $('#coreWeight').val(res.coreWeight || '');
+			    $('#rate').val(res.rate || '');
+
+			    const isSuccess = res.messageType === 'success';
+				const icon = isSuccess ? '✅' : '❌';
+				
+			    $('#serialNo').val('').focus();
+
+			    $('#status-message')
+			        .html(`${icon} ${res.message}`)
+			        .removeClass("text-success text-danger")
+			        .addClass(isSuccess ? "text-success" : "text-danger")
+			        .show();
 			},
 			error: function(xhr) {
-				alert('Không tìm thấy dữ liệu hoặc lỗi máy chủ!');
-				$('#serialNo').focus();
+			    let message = "Có lỗi xảy ra!";
+			    if (xhr.responseJSON && xhr.responseJSON.message) {
+			        message = xhr.responseJSON.message;
+			    }
+
+			    $('#status-message')
+			        .html(`❌ ${message}`)
+			        .removeClass("text-success text-danger")
+			        .addClass("text-danger")
+			        .show();
 			}
 		});
 	}

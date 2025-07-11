@@ -1,0 +1,43 @@
+<th:block th:fragment="materialcore_manual_form">
+	<form role="form" id="MyForm" th:action="@{/materialcore/save}" th:object="${materialCore}" method="post">
+		<input type="hidden" th:field="*{id}" />
+		<table class="table small table-bordered table-striped rcorners1 mt-5">
+			<thead>
+				<tr>
+					<th colspan="4">
+						<h5>Nhập/Sửa Material Core thủ công</h5>
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td><label for="woNumber"> ItemCode </label></td>
+					<td><input type="text" id="itemCode" th:field="*{itemCode}" class='rcorners1' /></td>
+					<td><label for="line"> Item Name </label></td>
+					<td><input type="text" id="itemCode" th:field="*{itemName}" class='rcorners1' />
+					</td>
+				</tr>
+				<tr>
+					<td><label for="model">Kiểu lõi</label></td>
+					<td><input type="text" id="coreType" th:field="*{coreType}" class='rcorners1' />
+					</td>
+					<td><label for="woQty">Trọng lượng lõi</label></td>
+					<td><input type="text" id="coreWeight" th:field="*{coreWeight}" class='rcorners1' /></td>
+				</tr>
+				<tr>
+					<td><label for="rate">Tỷ số quy đổi</label></td>
+					<td><input type="text" id="rate" th:field="*{rate}" class='rcorners1' />
+					</td>
+					<td><label for="vendor">Nhà cung cấp</label></td>
+					<td><input type="text" id="vendor" th:field="*{vendor}" class='rcorners1' /></td>
+				</tr>
+				<tr>
+					<td colspan="4" style="text-align: right;">
+						<input type="button" value="Xóa trắng" onclick="myClear()" />
+						<input type="submit" name="save" value="Save" />
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+</th:block>

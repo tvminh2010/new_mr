@@ -8,43 +8,13 @@
 	<main role="main" class="container-fluid" style="margin-top: 56px;">
 		<div class="row">
 			<div th:replace="~{fragments/left_sidebar :: left_sidebar}"></div>
-		
-			<div class="col-12 col-md-9 col-lg-10 pt-3">
-					<h5 class="mb-3">Hiển thị dữ liệu!</h5>
-					<!-- Bảng dữ liệu -->
-					<div class="table-responsive">
-						<table id="workOrderTable" class="table table-sm table-hover table-bordered text-nowrap">
-							<thead class="text-center">
-								<tr>
-									<th scope="col">#</th>
-									<th scope="col">Category</th>
-									<th scope="col">Item Code</th>
-									<th scope="col">Item Name</th>
-									<th scope="col">Unit</th>
-									<th scope="col">Kiểu lõi</th>
-									<th scope="col">Trọng lượng lõi</th>
-									<th scope="col">Tỷ số quy đổi</th>
-									<th scope="col">Action</th>
-								</tr>
-							</thead>
-							<tbody class="text-center">
-							</tbody>
-						</table>
-					</div>
-
-					<!-- Thông báo -->
-					<div th:if="${message}" class="alert alert-success alert-dismissible fade show mt-2" role="alert">
-						<span th:text="${message}"></span>
-						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-				</div>
+			<div th:replace="~{fragments/materialcore/materialcore_list :: materialcore_list}"></div>
 		</div>
 	</main>
 	<script src="/bootstrap-4.6.2/js/jquery-3.5.1.min.js"></script>
 	<script src="/bootstrap-4.6.2/js/bootstrap.bundle.min.js"></script>
 	<!-- DataTables CSS + JS -->
 	<script src="/dataTables/jquery.dataTables.min.js"></script>
+	<script src="/js/materialcore.js"></script>
 </body>
 </html>

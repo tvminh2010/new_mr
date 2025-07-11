@@ -17,7 +17,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class DetailItemBySerialDto {
+public class DetailItemBySerialWMSDto {
 	String category;
 	String itemCode;
 	String itemName;

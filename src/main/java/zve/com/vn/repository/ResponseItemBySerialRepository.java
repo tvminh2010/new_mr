@@ -2,17 +2,18 @@ package zve.com.vn.repository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import zve.com.vn.dto.order.response.DetailItemBySerialDto;
+import zve.com.vn.dto.order.response.DetailItemBySerialWMSDto;
 
 @Repository
 public class ResponseItemBySerialRepository  {
 	private final JdbcTemplate jdbc;
 	/* ---------------------------------------------------------- */
-	public ResponseItemBySerialRepository(@Qualifier("thirdJdbcTemplate") JdbcTemplate jdbc) {
+	public ResponseItemBySerialRepository(
+			@Qualifier("thirdJdbcTemplate") JdbcTemplate jdbc) {
 		this.jdbc = jdbc;
 	}
 	/* ---------------------------------------------------------- */
-	public DetailItemBySerialDto detailItemBySerial(String serial) {
+	public DetailItemBySerialWMSDto detailItemBySerial(String serial) {
 	    String sql = """
 	        SELECT pm.category_code, 
 	               pi.product_no, 
@@ -31,7 +32,7 @@ public class ResponseItemBySerialRepository  {
 	    """;
 
 	    return jdbc.query(sql, (rs, rowNum) -> {
-	        DetailItemBySerialDto dto = new DetailItemBySerialDto();
+	        DetailItemBySerialWMSDto dto = new DetailItemBySerialWMSDto();
 	        dto.setCategory(rs.getString("category_code"));
 	        dto.setItemCode(rs.getString("product_no"));
 	        dto.setItemName(rs.getString("product_name"));

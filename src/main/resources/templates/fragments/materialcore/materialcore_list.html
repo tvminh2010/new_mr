@@ -1,0 +1,56 @@
+<th:block th:fragment="materialcore_list">
+
+	<div class="col-12 col-md-9 col-lg-10 pt-3">
+		<form th:replace="~{fragments/materialcore/materialcore_import_form :: materialcore_import_form}"></form>
+		<form th:replace="~{fragments/materialcore/materialcore_manual_form :: materialcore_manual_form}"></form>
+
+		<!-- <h5 class="mb-3">Hiển thị dữ liệu Material core!</h5>-->
+		<!-- Bảng dữ liệu -->
+		<div class="table-responsive">
+			<table id="materialCoreTable" class="table table-sm table-hover table-bordered text-nowrap">
+				<thead class="text-center">
+					<tr>
+						<th scope="col">#</th>
+						<th scope="col">Item Code</th>
+						<th scope="col">Item Name</th>
+						<th scope="col">Unit</th>
+						<th scope="col">Kiểu lõi</th>
+						<th scope="col">Trọng lượng lõi</th>
+						<th scope="col">Tỷ số quy đổi</th>
+						<th scope="col">Nhà cung cấp</th>
+						<th scope="col">Action</th>
+					</tr>
+				</thead>
+				<tbody class="text-center">
+					<tr th:each="item, iterStat : ${materialCoreList}">
+						<td scope="row" th:text="${iterStat.index + 1}"></td>
+						<td th:text="${item.itemCode}"></td>
+						<td th:text="${item.itemName}"></td>
+						<td th:text="${item.unit}"></td>
+						<td th:text="${item.coreType}"></td>
+						<td th:text="${item.coreWeight}"></td>
+						<td th:text="${item.rate}"></td>
+						<td th:text="${item.vendor}"></td>
+						<td>
+							<a th:href="@{/materialcore/edit(core_id=${item.id})}">
+								<i class="fas fa-edit text-secondary"></i>
+							</a>
+
+							<a th:href="@{/materialcore/del(core_id=${item.id})}" onclick="return confirmDelete()">
+								<i class="fas fa-trash text-danger"></i>
+							</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<!-- Thông báo -->
+		<div th:if="${message}" class="alert alert-success alert-dismissible fade show mt-2" role="alert">
+			<span th:text="${message}"></span>
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+	</div>
+</th:block>
