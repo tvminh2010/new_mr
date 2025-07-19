@@ -1,5 +1,57 @@
+/* ---------------------------------------------------------------------- */
+function applyNetWeightToQty() {
+	const netWeight = parseFloat($('#netWeight').val()) || 0;
+	const targetItemCode = $('#itemCode').val().trim();
+
+	if (!targetItemCode) return;
+
+	let matched = false;
+
+	$('#dataTableBody tr').each(function () {
+		const $row = $(this);
+		const itemCodeInRow = ($row.data('itemcode') || '').toString().trim().toUpperCase();
+
+		if (itemCodeInRow === targetItemCode) {
+			const $input = $row.find('input[name="soLuong[]"]');
+			const currentQty = parseFloat($input.val()) || 0;
+			const newQty = currentQty + netWeight;
+			$input.val(newQty.toFixed(6));
+			matched = true;
+			return false; 
+		}
+	});
+
+	if (!matched) {
+		console.warn("Không tìm thấy dòng nào có itemCode =", targetItemCode);
+	}
+}
+/* ---------------------------------------------------------------------- */
+function fetchLatestWeight() {
+	fetch('/hoantra-nvl/weight-latest')
+		.then(res => res.text())
+		.then(weight => {
+			if (weight) {
+				document.getElementById("weight").value = weight;
+				calculateNetWeight();
+			}
+		});
+}
+let lastNetWeight = null;
+
+function calculateNetWeight() {
+    const weight = parseFloat(document.getElementById("weight").value) || 0;
+    const coreWeight = parseFloat(document.getElementById("coreWeight").value) || 0;
+    const netWeight = (weight - coreWeight).toFixed(6);
+    document.getElementById("netWeight").value = netWeight;
+
+	if (netWeight !== lastNetWeight) {
+	       lastNetWeight = netWeight;
+	       applyNetWeightToQty();
+	}
+}
+
+/* ---------------------------------------------------------------------- */
 $(document).ready(function() {
-	// Khi chọn Line thì gọi API để đổ Workorder (đã có)
 	$('#lineSelect').change(function() {
 		var selectedLine = $(this).val();
 		if (selectedLine) {
@@ -73,6 +125,12 @@ $(document).ready(function() {
 
 				if (data.model) {
 					$('#middleFormSection').show();
+
+					if (!window.weightIntervalStarted) {
+						window.weightIntervalStarted = true;
+						setInterval(fetchLatestWeight, 1000);
+					}
+
 					setTimeout(function() {
 						$('#serialNo').focus();
 					}, 100);
@@ -171,46 +229,50 @@ $(document).ready(function() {
 			contentType: 'application/json',
 			data: JSON.stringify({ serialNo: serial, workOrderCode: workOrderCode }),
 			success: function(res) {
-			    $('#itemCategory').val(res.category || '');
-			    $('#itemCode').val(res.itemCode || '');
-			    $('#itemName').val(res.itemName || '');
-			    $('#lotNo').val(res.lotNo || '');
-			    $('#vendor').val(res.vendor || '');
-			    $('#unit').val(res.unit || '');
-			    $('#coreType').val(res.coreType || '');
-			    $('#receivingDate').val(res.receivingDate || '');
-			    $('#coreWeight').val(res.coreWeight || '');
-			    $('#rate').val(res.rate || '');
+				$('#itemCategory').val(res.category || '');
+				$('#itemCode').val(res.itemCode || '');
+				$('#itemName').val(res.itemName || '');
+				$('#lotNo').val(res.lotNo || '');
+				$('#vendor').val(res.vendor || '');
+				$('#unit').val(res.unit || '');
+				$('#coreType').val(res.coreType || '');
+				$('#receivingDate').val(res.receivingDate || '');
+				$('#coreWeight').val(res.coreWeight || '');
+				$('#rate').val(res.rate || '');
 
-			    const isSuccess = res.messageType === 'success';
+				const isSuccess = res.messageType === 'success';
 				const icon = isSuccess ? '✅' : '❌';
-				
-			    $('#serialNo').val('').focus();
 
-			    $('#status-message')
-			        .html(`${icon} ${res.message}`)
-			        .removeClass("text-success text-danger")
-			        .addClass(isSuccess ? "text-success" : "text-danger")
-			        .show();
+				$('#serialNo').val('').focus();
+				$('#status-message')
+					.html(`${icon} ${res.message}`)
+					.removeClass("text-success text-danger")
+					.addClass(isSuccess ? "text-success" : "text-danger")
+					.show();
 			},
 			error: function(xhr) {
-			    let message = "Có lỗi xảy ra!";
-			    if (xhr.responseJSON && xhr.responseJSON.message) {
-			        message = xhr.responseJSON.message;
-			    }
+				let message = "Có lỗi xảy ra!";
+				if (xhr.responseJSON && xhr.responseJSON.message) {
+					message = xhr.responseJSON.message;
+				}
 
-			    $('#status-message')
-			        .html(`❌ ${message}`)
-			        .removeClass("text-success text-danger")
-			        .addClass("text-danger")
-			        .show();
+				$('#status-message')
+					.html(`❌ ${message}`)
+					.removeClass("text-success text-danger")
+					.addClass("text-danger")
+					.show();
 			}
 		});
 	}
-	/* ---------------------------------------------------------------------- */
+
 	if (data.model) {
 		$('#middleFormSection').show(); // model khác null thì hiển thị form
 	}
+	/* ------------------------------------------------------------------------- */
+	//$('#netWeight').on('input', applyNetWeightToQty);
+	//console.log($('#netWeight').length);
 });
+
+
 
 

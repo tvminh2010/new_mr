@@ -27,7 +27,7 @@
 
 				<tbody class="text-center">
 					<tr th:each="order, iterStat : ${orderLists}"
-						th:classappend="'table-warning'"
+						th:classappend="'bg-info'"
 						th:attr="data-id=${order.id}">
 						<td scope="row" th:text="${iterStat.index + 1}"></td>
 						<td th:text="${#dates.format(order.createdDate, 'HH:mm')}"></td>
@@ -39,7 +39,8 @@
 						<td class="status-cell">
 							<a th:href="@{/order/picking(id=${order.id})}"
 							   th:data-id="${order.id}">
-							   <i class="fas fa-hand-point-right icon-status" title="Tiến hành nhặt hàng"></i>
+							  <!-- <i class="fas fa-hand-point-right icon-status" title="Tiến hành nhặt hàng"></i> -->
+							   <i class="fas fa-tasks icon-status" title="Tiến hành nhặt hàng"></i>
 							</a>
 						</td>
 					</tr>

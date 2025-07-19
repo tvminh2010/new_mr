@@ -4,7 +4,7 @@
 		<button class="btn btn-outline-secondary btn-sm" type="button" data-toggle="collapse"
 			data-target="#sidebarMenu">☰ Menu</button>
 	</div>
-	
+
 	<div class="col-md-3 col-lg-2 collapse d-md-block pt-3 bg-light" id="sidebarMenu">
 		<div id="menuAccordion">
 			<!-- Nghiệp vụ -->
@@ -12,11 +12,23 @@
 				<div class="card-header pl-0 pt-2 pb-2">
 					<h5 class="mb-0">
 						<button class="accordion-header-btn" data-toggle="collapse" data-target="#collapseBusiness">
-							Nghiệp vụ
+							Main menu
 						</button>
 					</h5>
 				</div>
 				<div id="collapseBusiness" class="collapse show" data-parent="#menuAccordion">
+				 
+					<div class="list-group list-group-flush pl-3">
+						<a href="/workorder" class="list-group-item menu-link">Input work order</a>
+						 <a href="/quanlyorder" class="list-group-item menu-link">Show order on TV</a> 
+						<a href="/materialorder" class="list-group-item menu-link">Material order management</a>
+						<a href="/ycnvl" class="list-group-item menu-link">Prd request material</a>
+						<a href="/order/picking" class="list-group-item menu-link">LG pick up material</a>
+						<a href="#" class="list-group-item menu-link">Prd receive material</a>
+						<a href="#" class="list-group-item menu-link">Material return to LG</a>
+					</div>
+				
+					<!--
 					<div class="list-group list-group-flush pl-3">
 						<a href="/workorder" class="list-group-item menu-link">Nhập kế hoạch SX</a>
 						<a href="/quanlyorder" class="list-group-item menu-link">Order Onboard</a>
@@ -25,8 +37,8 @@
 						<a href="/order/picking" class="list-group-item menu-link">LG Nhặt NVL</a>
 						<a href="/order/receiving" class="list-group-item menu-link">SX Nhận NVL</a>
 						<a href="/hoantra-nvl" class="list-group-item menu-link">Hoàn trả NVL</a>
-						<!-- <a href="/auto_weighing" class="list-group-item menu-link">Cân tự động</a> -->
 					</div>
+					-->
 				</div>
 			</div>
 
@@ -36,7 +48,7 @@
 					<h5 class="mb-0">
 						<button class="accordion-header-btn collapsed" data-toggle="collapse"
 							data-target="#collapseReport">
-							Xuất báo cáo
+							Reports
 						</button>
 					</h5>
 				</div>
@@ -56,7 +68,7 @@
 					<h5 class="mb-0">
 						<button class="accordion-header-btn collapsed" data-toggle="collapse"
 							data-target="#collapseSetting">
-							Thiết lập
+							Settings
 						</button>
 					</h5>
 				</div>
@@ -66,7 +78,8 @@
 						<a href="#" class="list-group-item menu-link">Bom</a>
 						<a href="#" class="list-group-item menu-link">Item Master Sample</a>
 						<a href="#" class="list-group-item menu-link">Bom Sample</a>
-						<a href="/materialcore" class="list-group-item menu-link">Quản lý lõi NVL</a>
+						<a href="#" class="list-group-item menu-link">Quản lý lõi NVL</a>
+						<!-- <a href="/materialcore" class="list-group-item menu-link">Quản lý lõi NVL</a> -->
 					</div>
 				</div>
 			</div>

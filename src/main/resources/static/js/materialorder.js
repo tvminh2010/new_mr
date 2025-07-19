@@ -6,7 +6,7 @@ function confirmAndUpdateStatus(el) {
 
     $.post("/order/update", { id: orderId }, function(response) {
         row.removeClass("bg-warning table-warning bg-success table-secondary")
-           .addClass("table-warning");
+           .addClass("bg-info");
 
         row.find(".status-text").html("<span>2. Picking...</span>");
 

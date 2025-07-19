@@ -1,0 +1,41 @@
+<th:block th:fragment="quanlyorder_list">
+	<!-- Nội dung chính -->
+	<div class="col-12 col-md-9 col-lg-10 pt-3">
+		<h5 class="mb-3">Material order list!</h5>
+		<div class="row">
+			<!-- ************************************ -->
+			<th:block th:each="order : ${orderLists}">
+				<!-- Nếu status = 1 -->
+				<div th:if="${order.status == 1}" class="col-6 col-sm-3 col-md-2 col-xl-2 mb-3">
+					<div class="card bg-warning text-dark">
+						<div class="card-body p-2">
+							<h5 class="card-title mb-1">Line : <span th:text="${order.workOrder.line}"></span></h5>
+							<h6 class="card-title mb-1"><span th:text="${order.workOrder.model}"></span></h6>
+							<p class="card-text small">Status : Waiting...</p>
+						</div>
+					</div>
+				</div>
+				<!-- Nếu status = 2 -->
+				<div th:if="${order.status == 2}" class="col-6 col-sm-3 col-md-2 col-xl-2 mb-3">
+					<div class="card bg-info text-white">
+						<div class="card-body p-2">
+							<h5 class="card-title mb-1">Line : <span th:text="${order.workOrder.line}"></span></h5>
+							<h6 class="card-title mb-1"><span th:text="${order.workOrder.model}"></span></h6>
+							<p class="card-text small">Status : Picking...</p>
+						</div>
+					</div>
+
+				</div>
+				<div th:if="${order.status == 3}" class="col-6 col-sm-3 col-md-2 col-xl-2 mb-3">
+					<div class="card bg-success text-white">
+						<div class="card-body p-2">
+							<h5 class="card-title mb-1">Line : <span th:text="${order.workOrder.line}"></span></h5>
+							<h6 class="card-title mb-1"><span th:text="${order.workOrder.model}"></span></h6>
+							<p class="card-text small">Status : Delivering...</p>
+						</div>
+					</div>
+				</div>
+			</th:block>
+		</div>
+	</div>
+</th:block>
