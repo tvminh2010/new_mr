@@ -17,4 +17,5 @@ public interface WorkOrderService {
 	List<String> getAllLine();
 	List<String> getAllWoNumberByLine(String line);
 	BigDecimal calculateTotalReceivedQtyByItemCode(WorkOrder workOrder, String itemCode);
+	BigDecimal calculateTotalReturnQtyByItemCode(WorkOrder workOrder, String itemCode);
 }

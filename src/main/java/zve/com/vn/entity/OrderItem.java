@@ -52,9 +52,10 @@ public class OrderItem {
 	public BigDecimal getTotalPickingQtyByItemCode(String itemCode) {
 	    return orderItemSerialNos.stream()
 	            .filter(orderItemSerialNo -> orderItemSerialNo.getItemcode().equals(itemCode))  // Lọc theo itemCode
-	            .map(OrderItemSerialNo::getPickingQty)  // Lấy pickingQty
-	            .filter(pickingQty -> pickingQty != null)  // Loại bỏ null
-	            .reduce(BigDecimal.ZERO, BigDecimal::add);  // Tính tổng
+	            .map(OrderItemSerialNo::getPickingQty)  
+	            .filter(pickingQty -> pickingQty != null)  
+	            .reduce(BigDecimal.ZERO, BigDecimal::add)
+	            .stripTrailingZeros();
 	}
 	/* ------------------------------------------------- */
 	/* ------------------------------------------------- */

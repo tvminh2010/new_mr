@@ -51,6 +51,7 @@ public class ResponseOrderRepository  {
 	            qtyPlan,                        // qtyPlan (tính từ qtyPer * plan)
 	            BigDecimal.ZERO,                // qtyReceive (ban đầu 0)
 	            BigDecimal.ZERO,                // qtyrequest (ban đầu 0)
+	            BigDecimal.ZERO, 				// qtyreturn (ban đầu 0)
 	            rs.getInt("instock")            // tồn kho
 	        );
 	    }, model);

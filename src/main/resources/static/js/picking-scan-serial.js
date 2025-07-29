@@ -117,8 +117,16 @@ document.addEventListener('DOMContentLoaded', function () {
         showStatus('Chưa quét số Serial!', 'danger');
         return;
       }
-
-      fetch('/picking/save-serials', {
+	
+	  const urlParams = new URLSearchParams(window.location.search);
+	  const orderId = urlParams.get('id');
+	  if (!orderId) {
+	    showStatus('Không tìm thấy orderId!', 'danger');
+	    return;
+	  }
+	 
+	  fetch('/picking/save-serials?orderId=' + encodeURIComponent(orderId), {  
+      //fetch('/picking/save-serials', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(scannedSerialDetails)

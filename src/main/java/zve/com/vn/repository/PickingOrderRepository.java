@@ -17,18 +17,6 @@ public class PickingOrderRepository {
 	public PickingOrderRepository(@Qualifier("thirdJdbcTemplate") JdbcTemplate jdbc) {
 		this.jdbc = jdbc;
 	}
-
-	/* ---------------------------------------------------------- */
-	public PickingItemDto findPickingItemBySerial(String serialNo) {
-		String sql = """
-				SELECT pi.product_no, pi.loc_code, pi.serial_no, pi.qty
-				FROM public.product_instance pi
-				WHERE pi.serial_no = ?
-			""";
-		
-		return null;
-	}
-	
 	/* ---------------------------------------------------------- */
 	public List<PickingItemDto> findAllItems(String productNo) {
 		String sql = """

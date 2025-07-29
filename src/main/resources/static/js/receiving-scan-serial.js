@@ -12,6 +12,7 @@ $(document).ready(function() {
 	const scannedSerials = new Set();
 	const scannedSerialDetails = [];
 
+	/* ------------------------------------------------------------ */
 	function showStatus(message, type = 'success', duration = 0) {
 		statusDiv.textContent = message;
 		statusDiv.className = (type === 'success' ? 'text-success' : 'text-danger') + ' mt-2';
@@ -20,7 +21,7 @@ $(document).ready(function() {
 			setTimeout(() => (statusDiv.style.display = 'none'), duration);
 		}
 	}
-
+	/* ------------------------------------------------------------ */
 	input.addEventListener('keypress', function(e) {
 		if (e.key !== 'Enter') return;
 		e.preventDefault();
@@ -39,7 +40,15 @@ $(document).ready(function() {
 			.map(row => row.cells[0]?.textContent?.trim())
 			.filter(Boolean);
 
-		fetch('/receiving/scan-serial', {
+		const urlParams = new URLSearchParams(window.location.search);
+		const orderId = urlParams.get('id');
+		if (!orderId) {
+			showStatus('Không tìm thấy orderId!', 'danger');
+			return;
+		}
+
+		//fetch('/receiving/scan-serial', {
+		fetch('/receiving/scan-serial?orderId=' + encodeURIComponent(orderId), { 
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ serial, itemCodes })
@@ -123,8 +132,16 @@ $(document).ready(function() {
 				return;
 			}
 
-
-			fetch('/receiving/save-serials', {
+			const urlParams = new URLSearchParams(window.location.search);
+					const orderId = urlParams.get('id');
+					if (!orderId) {
+						showStatus('Không tìm thấy orderId!', 'danger');
+						return;
+			}
+			
+					
+			//fetch('/receiving/save-serials', {
+			fetch('/receiving/save-serials?orderId=' + encodeURIComponent(orderId), { 
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(scannedSerialDetails)

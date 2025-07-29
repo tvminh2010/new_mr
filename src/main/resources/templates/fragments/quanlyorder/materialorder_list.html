@@ -67,8 +67,8 @@
 							    <i class="fas fa-tasks icon-status" title="Đang nhặt hàng"></i>
 							</a>
 							
-							<a th:if="${order.status == 3}">
-					   <!-- <a th:if="${order.status == 3}" th:href="@{/order/receiving(id=${order.id})}"> -->
+							 <!-- <a th:if="${order.status == 3}">  -->
+					  		<a th:if="${order.status == 3}" th:href="@{/order/receiving(id=${order.id})}">
 							    <i class="fas fa-truck-moving icon-status" title="Đang giao hàng"></i>
 							</a>
 							

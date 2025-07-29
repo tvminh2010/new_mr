@@ -24,5 +24,6 @@ public class ResponseOrderDto {
 	BigDecimal qtyPlan;
 	BigDecimal qtyReceive;
 	BigDecimal qtyrequest;
+	BigDecimal qtyreturn;
 	Integer instock;
 }

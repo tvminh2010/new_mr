@@ -18,4 +18,5 @@ public class PickingSerialNo {
 	String itemCode;
 	String serialNo;
 	BigDecimal pickingqty;
+	String lotNo;
 }

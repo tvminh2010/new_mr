@@ -1,7 +1,11 @@
 package zve.com.vn.entity;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Random;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -35,11 +39,33 @@ public class OrderItemSerialNo {
 	String itemcode;
 	String serialNo;
 	String newSerialNo;
+	String lotNo;
+	String unit;
+	String vendor;
+	Date receivingDate;
+	
+	
+	@Column(precision = 38, scale = 6)
 	BigDecimal pickingQty;
+	
+	@Column(precision = 38, scale = 6)
 	BigDecimal receivedQty;
+	
+	@Column(precision = 38, scale = 6)
 	BigDecimal returnQty;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "order_item_id")
 	OrderItem orderItem;
+	
+    public String generateNewSerialNo() {
+        SimpleDateFormat sdf = new SimpleDateFormat("ddMMyy");
+        String datePart = sdf.format(new Date());
+        Random random = new Random();
+        StringBuilder randomPart = new StringBuilder();
+        for (int i = 0; i < 6; i++) {
+            randomPart.append(random.nextInt(10)); 
+        }
+        return datePart + randomPart.toString();
+    }
 }

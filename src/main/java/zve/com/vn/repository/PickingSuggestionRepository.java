@@ -115,13 +115,14 @@ public class PickingSuggestionRepository {
     }
     /* --------------------------------------------------------------- */
     public PickingSerialNo getItemBySerialNo(String serialNo) {
-        String sql = "SELECT pi.qty, pi.product_no, pi.serial_no " +
-                     "FROM public.product_instance pi WHERE pi.serial_no = ? AND pi.qty > 0";
+        String sql = "SELECT pi.qty, pi.product_no, pi.serial_no, pi.lot_no " +
+                     "FROM public.product_instance pi WHERE pi.serial_no = ? AND pi.qty > 0 LIMIT 1";
         try {
             return jdbc.queryForObject(sql, (rs, rowNum) -> {
                 PickingSerialNo item = new PickingSerialNo();
                 item.setItemCode(rs.getString("product_no"));        
                 item.setSerialNo(rs.getString("serial_no"));
+                item.setLotNo(rs.getString("lot_no"));  
                 item.setPickingqty(rs.getBigDecimal("qty"));          
                 return item;
             }, serialNo);

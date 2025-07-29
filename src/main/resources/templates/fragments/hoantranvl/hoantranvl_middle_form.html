@@ -1,5 +1,5 @@
 <th:block th:fragment="hoantranvl_middle_form">
-  <form>
+  <form id="hoantraForm">
     <div class="row mb-4 border-top">
       <!-- Cột quét serial -->
       <div class="col-md-6 pr-4">
@@ -52,7 +52,7 @@
             <input type="text" class="form-control" id="serialNo" name="serialNo" placeholder="Quét mã vạch nvl" autofocus>
           </div>
           <div class="form-group col-md-2 d-flex align-items-end">
-            <button type="submit" class="btn btn-secondary w-100">Add and Print</button>
+			<button type="button" class="btn btn-secondary w-100" id="btnAddPrint">Add and Print</button>
           </div>
         </div>
       </div>

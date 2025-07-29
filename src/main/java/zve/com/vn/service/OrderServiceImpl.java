@@ -63,4 +63,9 @@ public class OrderServiceImpl implements OrderService {
 		return repository.save(order);
 	}
 	/* ---------------------------------------------------- */
+	@Override
+	public boolean isSerialExistsInOrder(Long orderId, String serialNo) {
+		return repository.existsBySerialNoAndOrderId(serialNo, orderId);
+	}
+	/* ---------------------------------------------------- */
 }

@@ -13,4 +13,6 @@ public interface OrderService {
 	public String generateOrderName();
 	public int updateOrderByStatus(Long id, Integer status);
 	public Order save(Order order);
+	public boolean isSerialExistsInOrder(Long orderId, String serialNo);
+
 }

@@ -78,4 +78,15 @@ public class WorkOrderServiceImpl implements WorkOrderService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 	}
 	/* ---------------------------------------------------- */
+	@Override
+	public BigDecimal calculateTotalReturnQtyByItemCode(WorkOrder workOrder, String itemCode) {
+		return workOrder.getOrders().stream()
+                .flatMap(order -> order.getOrderItems().stream())
+                .flatMap(orderItem -> orderItem.getOrderItemSerialNos().stream())
+                .filter(orderItemSerialNo -> orderItemSerialNo.getItemcode().equals(itemCode))
+                .map(OrderItemSerialNo::getReturnQty)
+                .filter(returnQty -> returnQty != null)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+	}
+	/* ---------------------------------------------------- */
 }

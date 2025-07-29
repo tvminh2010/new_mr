@@ -91,7 +91,9 @@ public class YeucauNvlController {
 	    	for (ResponseOrderDto item : nvlList) {
 	    		String itemCode = item.getItemCode();
 	    		BigDecimal receivedQtyByItemCode = workOrderService.calculateTotalReceivedQtyByItemCode(workOrder, itemCode);
+	    		BigDecimal returnQtyByItemCode = workOrderService.calculateTotalReturnQtyByItemCode(workOrder, itemCode);
 	    		item.setQtyReceive(receivedQtyByItemCode);
+	    		item.setQtyreturn(returnQtyByItemCode);			//Dùng cho cân hàng trả về (Chung endpoint này)
 	    	}
 	    }
 

@@ -16,21 +16,27 @@ import zve.com.vn.entity.WorkOrder;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
-	
-	 // Tìm order theo WorkOrder và status
-    Optional<Order> findByWorkOrderAndStatus(WorkOrder workOrder, Integer status);
 
-    // Hoặc nếu muốn dùng theo woNumber (vì woNumber là duy nhất)
-    @Query("SELECT o FROM Order o WHERE o.workOrder.woNumber = :woNumber AND o.status = 1")
-    Optional<Order> findActiveOrderByWoNumber(@Param("woNumber") String woNumber);
-    
-    List<Order> findByStatus(Integer status);
-    List<Order> findAllByOrderByStatusAsc();
-    int countByCreatedDateBetween(Date start, Date end);
-    
-    @Modifying
-    @Transactional
-    @Query("UPDATE Order o SET o.status = :status WHERE o.id = :id")
-    int updateOrderByStatus(Long id, Integer status);
+	// Tìm order theo WorkOrder và status
+	Optional<Order> findByWorkOrderAndStatus(WorkOrder workOrder, Integer status);
+
+	// Hoặc nếu muốn dùng theo woNumber (vì woNumber là duy nhất)
+	@Query("SELECT o FROM Order o WHERE o.workOrder.woNumber = :woNumber AND o.status = 1")
+	Optional<Order> findActiveOrderByWoNumber(@Param("woNumber") String woNumber);
+
+	List<Order> findByStatus(Integer status);
+
+	List<Order> findAllByOrderByStatusAsc();
+
+	int countByCreatedDateBetween(Date start, Date end);
+
+	@Modifying
+	@Transactional
+	@Query("UPDATE Order o SET o.status = :status WHERE o.id = :id")
+	int updateOrderByStatus(Long id, Integer status);
+
+	@Query("SELECT COUNT(s) > 0 FROM OrderItemSerialNo s "
+			+ "WHERE s.serialNo = :serialNo AND s.orderItem.order.id = :orderId")
+	boolean existsBySerialNoAndOrderId(@Param("serialNo") String serialNo, @Param("orderId") Long orderId);
 
 }

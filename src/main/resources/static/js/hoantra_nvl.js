@@ -1,56 +1,4 @@
-/* ---------------------------------------------------------------------- */
-function applyNetWeightToQty() {
-	const netWeight = parseFloat($('#netWeight').val()) || 0;
-	const targetItemCode = $('#itemCode').val().trim();
 
-	if (!targetItemCode) return;
-
-	let matched = false;
-
-	$('#dataTableBody tr').each(function () {
-		const $row = $(this);
-		const itemCodeInRow = ($row.data('itemcode') || '').toString().trim().toUpperCase();
-
-		if (itemCodeInRow === targetItemCode) {
-			const $input = $row.find('input[name="soLuong[]"]');
-			const currentQty = parseFloat($input.val()) || 0;
-			const newQty = currentQty + netWeight;
-			$input.val(newQty.toFixed(6));
-			matched = true;
-			return false; 
-		}
-	});
-
-	if (!matched) {
-		console.warn("Không tìm thấy dòng nào có itemCode =", targetItemCode);
-	}
-}
-/* ---------------------------------------------------------------------- */
-function fetchLatestWeight() {
-	fetch('/hoantra-nvl/weight-latest')
-		.then(res => res.text())
-		.then(weight => {
-			if (weight) {
-				document.getElementById("weight").value = weight;
-				calculateNetWeight();
-			}
-		});
-}
-let lastNetWeight = null;
-
-function calculateNetWeight() {
-    const weight = parseFloat(document.getElementById("weight").value) || 0;
-    const coreWeight = parseFloat(document.getElementById("coreWeight").value) || 0;
-    const netWeight = (weight - coreWeight).toFixed(6);
-    document.getElementById("netWeight").value = netWeight;
-
-	if (netWeight !== lastNetWeight) {
-	       lastNetWeight = netWeight;
-	       applyNetWeightToQty();
-	}
-}
-
-/* ---------------------------------------------------------------------- */
 $(document).ready(function() {
 	$('#lineSelect').change(function() {
 		var selectedLine = $(this).val();
@@ -75,6 +23,7 @@ $(document).ready(function() {
 		}
 	});
 
+	/* ------------------------------------------------------------------------- */
 	// Khi chọn Workorder thì lấy Model, Plan và danh sách materials
 	$('#workorderSelect').change(function() {
 		const selectedWo = $(this).val();
@@ -114,7 +63,7 @@ $(document).ready(function() {
 				            <td class="align-middle small text-left">${item.qtyReceive || ''}</td>
 				            <td class="align-middle">
 				                <div class="input-group input-group-sm">
-				                    <input type="text" class="form-control form-control-sm" name="soLuong[]" ${readonlyAttr} value="${item.qtyrequest || ''}">
+				                    <input type="text" class="form-control form-control-sm" name="soLuong[]" ${readonlyAttr} value="${item.qtyreturn || ''}">
 				                </div>
 				            </td>
 				        </tr>
@@ -122,20 +71,10 @@ $(document).ready(function() {
 					$tbody.append(row);
 				});
 
-
 				if (data.model) {
 					$('#middleFormSection').show();
-
-					if (!window.weightIntervalStarted) {
-						window.weightIntervalStarted = true;
-						setInterval(fetchLatestWeight, 1000);
-					}
-
-					setTimeout(function() {
-						$('#serialNo').focus();
-					}, 100);
+					$('#serialNo').focus();
 				}
-
 			},
 			error: function(xhr, status, error) {
 				console.error("Lỗi khi lấy thông tin WorkOrder:", error);
@@ -143,8 +82,7 @@ $(document).ready(function() {
 			}
 		});
 	});
-
-
+	/* ------------------------------------------------------------------------- */
 	/** Lấy dữ liệu đã nhập và đẩy lên server bằng post */
 	$('#dataForm').submit(function(e) {
 		e.preventDefault();
@@ -158,7 +96,6 @@ $(document).ready(function() {
 			const itemName = $row.data('itemname');
 			const qtyrequest = $row.find('input[name="soLuong[]"]').val();
 
-			// Bỏ qua nếu không có mã hoặc không nhập số lượng
 			if (itemCode && qtyrequest) {
 				dataToSend.push({
 					itemCategory: itemCategory,
@@ -175,7 +112,6 @@ $(document).ready(function() {
 			items: dataToSend
 		};
 
-		// Gửi lên server bằng AJAX POST
 		$.ajax({
 			url: '/ycnvl/workorder-info',
 			type: 'POST',
@@ -200,29 +136,24 @@ $(document).ready(function() {
 			}
 		});
 	});
-	/** End lấy dữ liệu đã nhập và đẩy lên server bằng post */
-
-
 	/* ---------------------------------------------------------------------- */
 	/** Xử lý phần hiển thị quét mã serial của hàng trả về */
 	$('#serialNo').focus();
-	// Xử lý khi người dùng nhấn Enter trong ô quét mã
 	$('#serialNo').on('keypress', function(e) {
 		if (e.which === 13) {
 			e.preventDefault();
 			submitSerialNo();
 		}
 	});
-
+	/* ------------------------------------------------------------------------- */
 	$('#serialNo').on('blur', function() {
 		submitSerialNo();
 	});
-
+	/* ------------------------------------------------------------------------- */
 	function submitSerialNo() {
 		let serial = $('#serialNo').val().trim();
-		let workOrderCode = $('#workorderSelect').val(); // 🔥 lấy WO hiện tại
+		let workOrderCode = $('#workorderSelect').val();
 		if (!serial) return;
-
 		$.ajax({
 			url: '/hoantra-nvl/serial-scan',
 			method: 'POST',
@@ -243,7 +174,6 @@ $(document).ready(function() {
 				const isSuccess = res.messageType === 'success';
 				const icon = isSuccess ? '✅' : '❌';
 
-				$('#serialNo').val('').focus();
 				$('#status-message')
 					.html(`${icon} ${res.message}`)
 					.removeClass("text-success text-danger")
@@ -265,14 +195,58 @@ $(document).ready(function() {
 		});
 	}
 
-	if (data.model) {
-		$('#middleFormSection').show(); // model khác null thì hiển thị form
-	}
 	/* ------------------------------------------------------------------------- */
-	//$('#netWeight').on('input', applyNetWeightToQty);
-	//console.log($('#netWeight').length);
+	/* ------- Gửi dữ liệu từ form về server để in label và lưu vào CSDL ------- */
+	$('#btnAddPrint').click(function(e) {
+		e.preventDefault();
+
+		const serialNo = $('#serialNo').val().trim();
+		const weight = parseFloat($('#weight').val()) || 0;
+		const netWeight = parseFloat($('#netWeight').val()) || 0;
+		const quantity = parseFloat($('#quantity').val()) || 0;
+
+		if (!serialNo) {
+			alert("Vui lòng nhập mã serial!");
+			return;
+		}
+
+		const data = {
+			serialNo: serialNo,
+			quantity: quantity
+		};
+
+		$.ajax({
+			url: '/hoantra-nvl/print_and_save',
+			method: 'POST',
+			contentType: 'application/json',
+			data: JSON.stringify(data),
+			success: function(result) {
+
+
+				$('#status-message')
+					.removeClass('text-danger')
+					.addClass('text-success')
+					.text(result.message || 'Lưu thành công!')
+					.fadeIn();
+
+				$('#hoantraForm')[0].reset();
+			},
+			error: function(xhr) {
+				let errorMessage = 'Có lỗi xảy ra!';
+				if (xhr.responseJSON && xhr.responseJSON.message) {
+					errorMessage = xhr.responseJSON.message;
+				} else if (xhr.responseText) {
+					errorMessage = xhr.responseText;
+				}
+
+				$('#status-message')
+					.removeClass('text-success')
+					.addClass('text-danger')
+					.text(errorMessage)
+					.fadeIn();
+			}
+		});
+	});
+	/* ------------------------------------------------------------------------- */
+	/* ------------------------------------------------------------------------- */
 });
-
-
-
-
