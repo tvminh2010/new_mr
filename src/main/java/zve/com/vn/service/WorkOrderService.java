@@ -11,11 +11,14 @@ public interface WorkOrderService {
 	void saveAll(List<WorkOrder> workOrders);
 	List<WorkOrder> findAll();
 	Optional<WorkOrder> findByWoNumber(String woNumber);
+	Optional<WorkOrder> findByLineAndModel(String line, String model);
+	
 	Optional<WorkOrder> findById (String woNumber);
 	void delete(WorkOrder workOrder);
 	boolean existsByWoNumber(String woNumber);
 	List<String> getAllLine();
 	List<String> getAllWoNumberByLine(String line);
+	List<String> getAllModelByLine(String line);
 	BigDecimal calculateTotalReceivedQtyByItemCode(WorkOrder workOrder, String itemCode);
 	BigDecimal calculateTotalReturnQtyByItemCode(WorkOrder workOrder, String itemCode);
 }

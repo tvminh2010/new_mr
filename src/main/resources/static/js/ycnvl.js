@@ -8,10 +8,10 @@ $(document).ready(function () {
                 type: 'GET',
                 data: { line: selectedLine },
                 success: function (data) {
-                    let $woSelect = $('#workorderSelect');
-                    $woSelect.empty().append('<option value="">--Workorder--</option>');
-                    data.forEach(function (wo) {
-                        $woSelect.append('<option value="' + wo + '">' + wo + '</option>');
+                    let $modelSelect = $('#modelSelect');
+                    $modelSelect.empty().append('<option value="">--Model--</option>');
+                    data.forEach(function (model) {
+                        $modelSelect.append('<option value="' + model + '">' + model + '</option>');
                     });
 
                     // Reset model, plan, materials
@@ -24,10 +24,12 @@ $(document).ready(function () {
     });
 
     // Khi chọn Workorder thì lấy Model, Plan và danh sách materials
-	$('#workorderSelect').change(function () {
-	    const selectedWo = $(this).val();
-	    if (!selectedWo) {
-	        $('#modelText').text('');
+	$('#modelSelect').change(function () {
+	    const selectedModel = $(this).val();
+		const selectedLine = $('#lineSelect').val();
+		
+	    if (!selectedModel) {
+	        $('#woText').text('');
 	        $('#planText').text('');
 	        $('#dataTableBody').empty();
 	        return;
@@ -36,9 +38,10 @@ $(document).ready(function () {
 	    $.ajax({
 	        url: '/ycnvl/workorder-info',
 	        type: 'GET',
-	        data: { woNumber: selectedWo },
+	        data: { model: selectedModel,  
+					line: selectedLine },
 	        success: function (data) {
-	            $('#modelText').text(data.model || '');
+	            $('#woText').text(data.woNumber || '');
 	            $('#planText').text(data.plan || '');
 
 	            const materials = data.materials || [];
@@ -83,7 +86,7 @@ $(document).ready(function () {
 	/** Lấy dữ liệu đã nhập và đẩy lên server bằng post */
 	$('#dataForm').submit(function (e) {
 	    e.preventDefault();
-		const woNumber = $('#workorderSelect').val();
+		const woNumber = $('#woText').text()
 	    const dataToSend = [];
 
 	    $('#dataTableBody tr').each(function () {

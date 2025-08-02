@@ -48,18 +48,16 @@
 							    th:with="qty=${item.requestqty != null ? item.requestqty.stripTrailingZeros().toPlainString() : ''}"
 							    th:text="${#strings.contains(qty, '.') ? qty.replaceFirst('(\\.\\d*?)0+$', '$1').replaceFirst('\\.$', '') : qty}">
 							</td>
-
-
 							
 							<td>
-								<input type="text"
-								       name="pickingQty[[${iterStat.index}]]"
-								       class="form-control form-control-sm text-right"
-									   th:value="${#numbers.formatDecimal(item.pickingqty, 0, 'COMMA', 2, 'POINT')}"
-								       readonly />
+								<input type="number"
+						       name="pickingQty[[${iterStat.index}]]"
+						       class="form-control form-control-sm text-right"
+							   th:value="${item.pickingqty != null ? item.pickingqty.setScale(2, T(java.math.RoundingMode).HALF_UP) : ''}"
+						       />
 							</td>
 
-							
+
 							<td>
 							  <span th:if="${item.pickingqty != null and item.requestqty != null and item.pickingqty.compareTo(item.requestqty) >= 0}">
 							    <i class="fas fa-check-circle text-success" title="Đã nhặt đủ hoặc dư"></i>

@@ -20,6 +20,11 @@ public interface WorkOrderRepository extends JpaRepository<WorkOrder, String> {
 	@Query("SELECT w.woNumber FROM WorkOrder w WHERE w.line = :line")
 	List<String> findAllWoNumberByLine(@Param("line") String line);
 	
+	@Query("SELECT w.model FROM WorkOrder w WHERE w.line = :line")
+	List<String> findAllModelByLine(@Param("line") String line);
+	
 	@Query("SELECT w.woNumber FROM WorkOrder w WHERE w.line = :line")
 	Order findOrderByStatus(@Param("OrderStatus") Long orderStatus);
+	
+	Optional<WorkOrder> findByLineAndModel(String line, String model);
 }

@@ -47,15 +47,21 @@ public class YeucauNvlController {
 		return "ycnvl";
 	}
 	/* ------------------------------------------------- */
-	@GetMapping("/ycnvl/by-line")
+	@GetMapping("/ycnvl/by-line2")
 	@ResponseBody
 	public List<String> getWorkOrdersByLine(@RequestParam("line") String line) {
 		return workOrderService.getAllWoNumberByLine(line);
 	}
 	/* ------------------------------------------------- */
-	@GetMapping("/ycnvl/workorder-info")
+	@GetMapping("/ycnvl/by-line")
 	@ResponseBody
-	public Map<String, Object> getWorkOrderInfo(@RequestParam("woNumber") String woNumber) {
+	public List<String> getModelByLine(@RequestParam("line") String line) {
+		return workOrderService.getAllModelByLine(line);
+	}
+	/* ------------------------------------------------- */
+	@GetMapping("/ycnvl/workorder-info2")
+	@ResponseBody
+	public Map<String, Object> getWorkOrderInfo2(@RequestParam("woNumber") String woNumber) {
 	    Map<String, Object> result = new HashMap<>();
 	    WorkOrder workOrder = workOrderService.findByWoNumber(woNumber).orElse(null);
 	    if (workOrder == null) {
@@ -101,7 +107,54 @@ public class YeucauNvlController {
 	    result.put("materials", nvlList);
 	    return result;
 	}
+	/* ------------------------------------------------- */
+	@GetMapping("/ycnvl/workorder-info")
+	@ResponseBody
+	public Map<String, Object> getWorkOrderInfo(@RequestParam("model") String model,  @RequestParam("line") String line) {
+	    Map<String, Object> result = new HashMap<>();
+	    WorkOrder workOrder = workOrderService.findByLineAndModel(line, model).orElse(null);
+	    if (workOrder == null) {
+	        result.put("error", "WorkOrder not found");
+	        return result;
+	    }
+	    result.put("woNumber", workOrder.getWoNumber());
+	    result.put("plan", String.valueOf(workOrder.getWoQty()));
+	    
+	    List<ResponseOrderDto> nvlList = nvlRepository.findAllItems(workOrder.getModel(), workOrder.getWoQty());
+	    Optional<Order> orderOpt = orderService.findByWoNumberandStatus(workOrder.getWoNumber());
+	    if (orderOpt.isPresent()) {					//Nếu order vẫn ở trạng thái ycnvl
+	        Order order = orderOpt.get();
+	        List<OrderItem> orderItems = order.getOrderItems();
+	        Map<String, OrderItem> orderItemMap = orderItems.stream()
+	            .collect(Collectors.toMap(OrderItem::getItemcode, orderItem -> orderItem));
+	        
+	        
+	        for (ResponseOrderDto item : nvlList) {
+	            String itemCode = item.getItemCode();
+	            BigDecimal receivedQtyByItemCode = workOrderService.calculateTotalReceivedQtyByItemCode(workOrder, itemCode);
+	            OrderItem orderItem = orderItemMap.get(itemCode);
+	            if (orderItem != null) {
+	                item.setQtyReceive(receivedQtyByItemCode);
+	                item.setQtyrequest(orderItem.getQtyrequest());
+	            } else {
+	                item.setQtyReceive(BigDecimal.ZERO);
+	                item.setQtyrequest(BigDecimal.ZERO);
+	            }
+	        }
+	        
+	    } else {									//Nếu order đã chuyển sang trạng thái nhặt hàng.
+	    	for (ResponseOrderDto item : nvlList) {
+	    		String itemCode = item.getItemCode();
+	    		BigDecimal receivedQtyByItemCode = workOrderService.calculateTotalReceivedQtyByItemCode(workOrder, itemCode);
+	    		BigDecimal returnQtyByItemCode = workOrderService.calculateTotalReturnQtyByItemCode(workOrder, itemCode);
+	    		item.setQtyReceive(receivedQtyByItemCode);
+	    		item.setQtyreturn(returnQtyByItemCode);			//Dùng cho cân hàng trả về (Chung endpoint này)
+	    	}
+	    }
 
+	    result.put("materials", nvlList);
+	    return result;
+	}
 	/* ------------------------------------------------- */
 	@PostMapping("/ycnvl/workorder-info")
 	@ResponseBody

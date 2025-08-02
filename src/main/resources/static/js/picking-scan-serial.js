@@ -43,6 +43,8 @@ document.addEventListener('DOMContentLoaded', function () {
     })
       .then(res => res.json())
       .then(data => {
+		console.log('>>> Từ backend trả về:', data.pickingSerialNo);
+		
         showStatus(data.message || 'Đã được quét', data.success ? 'success' : 'danger');
         input.value = '';
         setTimeout(() => input.focus(), 100);
@@ -58,11 +60,11 @@ document.addEventListener('DOMContentLoaded', function () {
       });
   });
 
+  let numberOfScanedSerial = 0;
   /* ---------------------------------------------------------------- */
   function updatePickingQty(pickingSerialNo) {
       const rows = document.querySelectorAll('#orderTable tbody tr');
       let updated = false;
-
       rows.forEach((row) => {
           const itemCodeTd = row.children[1]; // Cột Mã SP
           const input = row.querySelector('input[type="number"]'); // Cột SL nhặt
@@ -79,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                   // Đảm bảo định dạng lại số lượng nhặt
                   input.value = newQty;
-
+				  numberOfScanedSerial += 1;
                   // Lấy SL yêu cầu từ cột thứ 4 (index = 3)
                   const requestQtyText = row.children[4]?.textContent?.trim();
                   const requestQty = parseFloat(requestQtyText) || 0;
@@ -97,8 +99,7 @@ document.addEventListener('DOMContentLoaded', function () {
                   } else {
                       statusCell.innerHTML = '<i class="fas fa-hourglass-half text-warning" title="Chưa nhặt đủ"></i>';
                   }
-
-                  // Highlight dòng tạm thời
+				  // Highlight dòng tạm thời
                   row.classList.add('row-highlight');
                   setTimeout(() => row.classList.remove('row-highlight'), 10000);
 
@@ -107,6 +108,12 @@ document.addEventListener('DOMContentLoaded', function () {
           }
       });
 
+	  if (numberOfScanedSerial > 0) {
+	      const status_message = "Số lượng serial đã quét thành công là: " + numberOfScanedSerial;
+	      showStatus(status_message, 'success');
+	  } else {
+	      showStatus("Không tìm thấy mã serial tương ứng!", 'warning');
+	  }
       return updated;
   }
   /* ---------------------------------------------------------------- */

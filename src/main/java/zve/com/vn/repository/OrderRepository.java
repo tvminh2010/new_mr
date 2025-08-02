@@ -23,7 +23,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 	// Hoặc nếu muốn dùng theo woNumber (vì woNumber là duy nhất)
 	@Query("SELECT o FROM Order o WHERE o.workOrder.woNumber = :woNumber AND o.status = 1")
 	Optional<Order> findActiveOrderByWoNumber(@Param("woNumber") String woNumber);
-
+	Optional<Order> findByOrderName(String orderName);
 	List<Order> findByStatus(Integer status);
 
 	List<Order> findAllByOrderByStatusAsc();
@@ -38,5 +38,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 	@Query("SELECT COUNT(s) > 0 FROM OrderItemSerialNo s "
 			+ "WHERE s.serialNo = :serialNo AND s.orderItem.order.id = :orderId")
 	boolean existsBySerialNoAndOrderId(@Param("serialNo") String serialNo, @Param("orderId") Long orderId);
-
+	
+	@Transactional
+	void deleteByOrderName(String orderName);
 }

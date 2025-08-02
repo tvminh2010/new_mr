@@ -50,6 +50,7 @@ public class Order {
 	@JoinColumn(name = "workorder_id")
 	WorkOrder workOrder;
 	
+	@Builder.Default
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
 	List<OrderItem> orderItems = new ArrayList<>();
 }

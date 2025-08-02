@@ -34,4 +34,13 @@ public interface OrderItemSerialNoRepository extends JpaRepository<OrderItemSeri
 	@Query("SELECT s.serialNo FROM OrderItemSerialNo s WHERE s.serialNo LIKE :datePrefix% ORDER BY s.serialNo DESC")
 	Optional<String> findLatestSerialNoForToday(@Param("datePrefix") String datePrefix);
 	/* -------------------------------------------------------------- */
+	@Query("""
+		    SELECT 
+		        COALESCE(SUM(s.pickingQty), 0), 
+		        COALESCE(SUM(s.receivedQty), 0)
+		    FROM OrderItemSerialNo s
+		    WHERE s.orderItem.order.id = :orderId
+		""")
+		Object getTotalPickingAndReceivedQtyByOrderId(@Param("orderId") Long orderId);
+	/* -------------------------------------------------------------- */
 }

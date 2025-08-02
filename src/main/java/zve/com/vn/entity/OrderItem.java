@@ -38,13 +38,13 @@ public class OrderItem {
 	String itemcategory;
 	String itemcode;
 	String itemname;
-	//BigDecimal qtyreceived;
 	BigDecimal qtyrequest;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "order_id")
 	Order order;
 	
+	@Builder.Default
 	@OneToMany(mappedBy = "orderItem", cascade = CascadeType.ALL, orphanRemoval = true)
 	List<OrderItemSerialNo> orderItemSerialNos = new ArrayList<>();
 	
@@ -54,8 +54,7 @@ public class OrderItem {
 	            .filter(orderItemSerialNo -> orderItemSerialNo.getItemcode().equals(itemCode))  // Lọc theo itemCode
 	            .map(OrderItemSerialNo::getPickingQty)  
 	            .filter(pickingQty -> pickingQty != null)  
-	            .reduce(BigDecimal.ZERO, BigDecimal::add)
-	            .stripTrailingZeros();
+	            .reduce(BigDecimal.ZERO, BigDecimal::add);
 	}
 	/* ------------------------------------------------- */
 	/* ------------------------------------------------- */

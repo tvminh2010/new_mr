@@ -8,7 +8,6 @@
 							<th scope="col">Mã NVL</th>
 							<th scope="col">Tên NVL</th>
 							<th scope="col">SL Yêu cầu</th>
-							<!-- <th scope="col">SerialNo</th> -->
 							<th scope="col">SL nhặt</th>
 							<th scope="col">SL nhận</th>
 							<th scope="col">Trạng thái</th>
@@ -20,46 +19,39 @@
 							<td th:text="${item.itemCode}"></td>
 							<td class="text-left" th:text="${item.itemName}"></td>
 							<td class="text-left" th:text="${item.requestqty?.intValue()}"></td>
-							<td class="text-left" th:text="${item.pickingqty}"></td>
+							<td class="text-left" th:text="${item.pickingqty != null ? item.pickingqty.stripTrailingZeros().toPlainString() : ''}"></td>
 							<td>
-								
 									   
-							   <input type="number" name="receivingQty[[${iterStat.index}]]"
+							   <input type="text" name="receivingQty[[${iterStat.index}]]"
 							          th:attr="data-itemcode=${item.itemCode}, data-pickingqty=${item.pickingqty}, 
 									  data-requestqty=${item.requestqty}"
-							          th:value="${item.receivingqty != null ? item.receivingqty : 0}" 
+									  th:value="${item.receivingqty != null ? item.receivingqty.stripTrailingZeros().toPlainString() : ''}"
 							          class="form-control form-control-sm text-right receiving-qty"
 							          readonly />
 							</td>
 							
 							<td class="status-cell">
 							  <span class="status-icon"></span>
-							</td>
-							<!-- 
-							<td>
-								<span
-									th:if="${item.pickingqty != null and item.receivingqty != null and item.pickingqty.intValue() == item.receivingqty.intValue()}">
-									<i class="fas fa-check-circle text-success" title="Đã nhận đủ"></i>
-								</span>
-								<span
-									th:if="${item.receivingqty == null or item.pickingqty.intValue() != item.receivingqty.intValue()}">
-									<i class="fas fa-hourglass-half text-warning" title="Chưa nhận đủ"></i>
-								</span>
-							</td> -->
-							
+							</td>						
 						</tr>
 					</tbody>
 
 				</table>
 
 				<div class="input-group mb-3">
-					<input type="text" class="form-control" name="scannedSerial"
-						placeholder="Quét số Serial để nhận hàng" aria-describedby="saveButton">
-					<div class="input-group-append">
-						<button class="btn btn-outline-secondary mr-3" type="button" id="saveAllBtn">Lưu lại</button>
-					</div>
-					<!-- <button class="btn btn-outline-primary" type="button" id="endReceivingOrder">Kết thúc nhận hàng</button> -->
+				    <input type="text" class="form-control" name="scannedSerial"
+				        placeholder="Quét số Serial để nhận hàng" aria-describedby="buttonGroup">
+				    <div class="input-group-append" id="buttonGroup">
+				        <button class="btn btn-outline-secondary mr-2" type="button" id="saveAllBtn">Lưu lại</button>
+				        <button class="btn btn-outline-danger" type="button" 
+							th:disabled="${!receivingComplete}"
+							onclick="endReceiving()"
+							id="endReceivingOrder">Kết thúc nhận hàng</button>
+				    </div>
 				</div>
+
+				
+				
 				<input type="hidden" id="orderId" th:value="${order.id}" />
 			</form>
 

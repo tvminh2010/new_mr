@@ -61,6 +61,7 @@ public class OrderController {
 	/* ------------------------------------------------- */
 	@GetMapping("/materialorder")
 	public String materialOrderIndex(Model model) {
+		//service.deleteOrderByOrderName("OD08022025-001");
 		List<Order> orderLists = service.fileAllOrder();
 		model.addAttribute("orderLists", orderLists);
 		return "materialorder";
@@ -133,7 +134,18 @@ public class OrderController {
 	@ResponseBody
 	public Map<String, Object> scanSerial(@RequestBody Map<String, Object> request) {
 	    String serial = (String) request.get("serial");
-	    List<String> itemCodes = (List<String>) request.get("itemCodes");
+	    //List<String> itemCodes = (List<String>) request.get("itemCodes");
+	    
+	    List<String> itemCodes = new ArrayList<>();
+	    Object obj = request.get("itemCodes");
+
+	    if (obj instanceof List<?>) {
+	        for (Object o : (List<?>) obj) {
+	            if (o instanceof String) {
+	                itemCodes.add((String) o);
+	            }
+	        }
+	    }
 
 	    Map<String, Object> response = new HashMap<>();
 	    
@@ -321,7 +333,10 @@ public class OrderController {
 	        }
 	    }
 
+	    boolean receivingComplete = service.isReceivingComplete(orderId);
+	    
 	    return ResponseEntity.ok(Map.of(
+	    	"receivingComplete", receivingComplete,
 	        "success", true,
 	        "message", "✅ Đã nhận thành công " + updated + " số serial. Không tìm thấy: " + notFound
 	    ));
@@ -347,11 +362,15 @@ public class OrderController {
 	public String orderReceiving(@RequestParam(value = "id", required = false) Long orderId, Model model) {
 	    List<Order> orderLists = service.findByStatus(3);
 	    model.addAttribute("orderLists", orderLists);
+	    
 	    if (orderId == null) {
+	    	model.addAttribute("receivingComplete", false);
 	        return "orderreceiving";
 	    }
 	    Optional<Order> orderOpt = service.findById(orderId);
+	    
 	    if (orderOpt.isEmpty()) {
+	    	model.addAttribute("receivingComplete", false);
 	        return "orderreceiving";
 	    }
 	    Order order = orderOpt.get();
@@ -367,10 +386,11 @@ public class OrderController {
 		        ))
 		        .toList();
 		      
-	    
+	    boolean receivingComplete = service.isReceivingComplete(orderId);
+	    System.out.println(receivingComplete);
 	    model.addAttribute("order", order);
 	    model.addAttribute("receivingItems", receivingItems);
-	    
+	    model.addAttribute("receivingComplete", receivingComplete);
 	    return "orderreceiving";
 	}
 	/* ------------------------------------------------- */

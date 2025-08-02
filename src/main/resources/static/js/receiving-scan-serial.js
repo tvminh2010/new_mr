@@ -48,7 +48,7 @@ $(document).ready(function() {
 		}
 
 		//fetch('/receiving/scan-serial', {
-		fetch('/receiving/scan-serial?orderId=' + encodeURIComponent(orderId), { 
+		fetch('/receiving/scan-serial?orderId=' + encodeURIComponent(orderId), {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ serial, itemCodes })
@@ -133,15 +133,14 @@ $(document).ready(function() {
 			}
 
 			const urlParams = new URLSearchParams(window.location.search);
-					const orderId = urlParams.get('id');
-					if (!orderId) {
-						showStatus('Không tìm thấy orderId!', 'danger');
-						return;
+			const orderId = urlParams.get('id');
+			if (!orderId) {
+				showStatus('Không tìm thấy orderId!', 'danger');
+				return;
 			}
-			
-					
-			//fetch('/receiving/save-serials', {
-			fetch('/receiving/save-serials?orderId=' + encodeURIComponent(orderId), { 
+
+
+			fetch('/receiving/save-serials?orderId=' + encodeURIComponent(orderId), {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(scannedSerialDetails)
@@ -152,14 +151,14 @@ $(document).ready(function() {
 					if (data.success) {
 						scannedSerials.clear();
 						scannedSerialDetails.length = 0;
+
+						endReceivingOrder.disabled = !data.receivingComplete;
 					}
 				})
 				.catch(error => {
 					console.error(error);
 					showStatus('Lỗi khi lưu serial!', 'danger');
 				});
-
-			endReceivingOrder.disabled = false;
 		});
 	}
 

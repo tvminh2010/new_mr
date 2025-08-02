@@ -89,4 +89,14 @@ public class WorkOrderServiceImpl implements WorkOrderService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 	}
 	/* ---------------------------------------------------- */
+	@Override
+	public List<String> getAllModelByLine(String line) {
+		return repository.findAllModelByLine(line);
+	}
+	/* ---------------------------------------------------- */
+	 @Override
+	    public Optional<WorkOrder> findByLineAndModel(String line, String model) {
+	        return repository.findByLineAndModel(line, model);
+	    }
+	/* ---------------------------------------------------- */
 }

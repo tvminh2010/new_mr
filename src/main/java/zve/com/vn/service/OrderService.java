@@ -14,5 +14,6 @@ public interface OrderService {
 	public int updateOrderByStatus(Long id, Integer status);
 	public Order save(Order order);
 	public boolean isSerialExistsInOrder(Long orderId, String serialNo);
-
+	public boolean isReceivingComplete(Long orderId);
+	public void deleteOrderByOrderName(String orderName);
 }
